@@ -67,54 +67,51 @@ def get_redirected_url(url):
         print(f"Response Content: {response.text}")
         return None
 
-def download_json(url, output_base_dir='3.0'):
+def download_json(url, output_root='3.0'):
     final_url = get_redirected_url(url)
 
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # Extract 'shuyuan' or 'shuyuans' from the URL
-        target_folder = re.search(r'/yuedu/(\w+)/json/', final_url)
-        output_dir = target_folder.group(1) if target_folder else None
+        # Extract the subdirectory name from the URL (either 'shuyuan' or 'shuyuans')
+        subdirectory = 'shuyuan' if 'shuyuan' in final_url else 'shuyuans'
 
-        if output_dir:
-            # Check if the output directory exists, if not, create it
-            output_dir = os.path.join(output_base_dir, output_dir)
-            os.makedirs(output_dir, exist_ok=True)
+        # Check if the output directory exists, if not, create it
+        output_dir = os.path.join(output_root, subdirectory)
+        os.makedirs(output_dir, exist_ok=True)
 
-            # Download the JSON content from the final URL
-            response = requests.get(final_url)
+        # Download the JSON content from the final URL
+        response = requests.get(final_url)
 
-            if response.status_code == 200:
-                try:
-                    json_content = response.json()
-                    id = final_url.split('/')[-1].split('.')[0]
+        if response.status_code == 200:
+            try:
+                json_content = response.json()
+                id = final_url.split('/')[-1].split('.')[0]
 
-                    link_date = None
-                    for _, date in parse_and_transform(final_url):
-                        if _ == url:
-                            link_date = date
-                            break
+                link_date = None
+                for _, date in parse_and_transform(final_url):
+                    if _ == url:
+                        link_date = date
+                        break
 
-                    if link_date is None:
-                        link_date = datetime.today().date()
+                if link_date is None:
+                    link_date = datetime.today().date()
 
-                    # Ensure that the file is saved in the specified output directory without subdirectories
-                    output_path = os.path.join(output_dir, f'{id}.json')
+                # Ensure that the file is saved in the specified output directory without subdirectories
+                output_path = os.path.join(output_dir, f'{id}.json')
 
-                    with open(output_path, 'w', encoding='utf-8') as f:
-                        f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
-                    print(f"Downloaded {id}.json to {output_dir}")
-                except json.JSONDecodeError as e:
-                    print(f"Error decoding JSON for {final_url}: {e}")
-                    print(f"Response Content: {response.text}")
-            else:
-                print(f"Error downloading {final_url}: Status code {response.status_code}")
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
+                print(f"Downloaded {id}.json to {output_dir}")
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON for {final_url}: {e}")
                 print(f"Response Content: {response.text}")
         else:
-            print(f"Error extracting target folder from URL: {url}")
+            print(f"Error downloading {final_url}: Status code {response.status_code}")
+            print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 
