@@ -51,11 +51,13 @@ def parse_page(url):
                 link_date = today - timedelta(days=days_ago)
 
                 # Check if the link is within the specified time range for the current URL
-                if url in time_ranges and time_ranges[url][0] <= days_ago <= time_ranges[url][1]:
+                time_range = time_ranges.get(url, (0, float('inf')))
+                if time_range[0] <= days_ago <= time_range[1]:
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
     return relevant_links
+
 
 # 使用示例
 for url in urls:
