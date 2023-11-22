@@ -76,12 +76,10 @@ def download_json(url, output_base_dir='output'):
                 # Hardcode the subdirectory and filename based on the URL
                 if 'shuyuans' in final_url:
                     subdirectory = 'shuyuans'
-                    filename = 'shuyuans.json'
-                    download_url = f'https://www.yckceo.com/yuedu/shuyuans/json/id/{id}.json'
+                    filename = f'{id}.json'
                 elif 'shuyuan' in final_url:
                     subdirectory = 'shuyuan'
-                    filename = 'shuyuan.json'
-                    download_url = f'https://www.yckceo.com/yuedu/shuyuan/json/id/{id}.json'
+                    filename = f'{id}.json'
                 else:
                     # Handle other cases or raise an error as needed
                     print(f"Unsupported URL: {final_url}")
@@ -96,8 +94,8 @@ def download_json(url, output_base_dir='output'):
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
                 print(f"Downloaded {filename} to {output_dir}")
 
-                # Now you can use the download_url variable for further processing
-                print(f"Download URL: {download_url}")
+                # Now you can use the original URL for further processing
+                print(f"Download URL: {url}")
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON for {final_url}: {e}")
                 print(f"Response Content: {response.text}")
@@ -106,6 +104,7 @@ def download_json(url, output_base_dir='output'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 def clean_old_files(directory='3.0'):
