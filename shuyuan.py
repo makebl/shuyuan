@@ -154,6 +154,7 @@ def merge_json_files(input_dir='', output_file='merged.json'):
 
 
 
+
 def main():
     # 存储根目录
     root_dir = os.getcwd()
