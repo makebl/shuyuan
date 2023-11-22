@@ -165,17 +165,18 @@ def merge_json_files(input_dir='', output_file='merged.json'):
 
 
 def main():
+    # 存储根目录
+    root_dir = os.getcwd()
+
     for url in urls:
         url_data = parse_page(url)
         for url, _ in url_data:
             # 根据不同的url选择不同的输出文件夹
             output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
-            download_json(url, output_base_dir=os.getcwd())  # 修改这里，确保使用正确的根目录
+            download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         # 根据不同的url选择不同的输出文件名
         output_file = 'shuyuan.json' if 'shuyuan' in url else 'shuyuans.json'
 
         # 使用不同的文件夹调用 merge_json_files
-        merge_json_files(input_dir=os.getcwd(), output_file=output_file)
+        merge_json_files(input_dir=root_dir, output_file=output_file)
 
-if __name__ == "__main__":
-    main()
