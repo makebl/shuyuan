@@ -127,7 +127,7 @@ def clean_old_files(directory='3.0'):
 
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if filename.endswith('.json') and filename != 'me.json':
+        if filename.endswith('.json'):
             os.remove(file_path)
             print(f"Deleted old file: {filename}")
 
