@@ -136,6 +136,9 @@ def clean_old_files(directory=''):
         print(f"删除文件夹: {directory}")
     except OSError as e:
         print(f"无法删除文件夹 {directory}: {e}")
+    else:
+        print(f"成功删除文件夹: {directory}")
+
 
 def merge_json_files(input_dir='', output_file='merged.json'):
     # 如果目录不存在，创建它
