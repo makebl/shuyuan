@@ -75,9 +75,9 @@ def download_json(url, output_dir='3.0'):
         print(f"Real URL: {final_url}")
 
         # Check if the output directory exists, if not, create it
-        if 'shuyuan' in url:
+        if 'shuyuan' in url and url.endswith('/shuyuan'):
             output_dir = 'shuyuan'
-        elif 'shuyuans' in url:
+        elif 'shuyuans' in url and url.endswith('/shuyuans'):
             output_dir = '3.0'
         os.makedirs(output_dir, exist_ok=True)
 
