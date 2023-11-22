@@ -50,9 +50,14 @@ def parse_page(url):
 
 def get_redirected_url(url):
     session = requests.Session()
-    response = session.get(url, verify=True, allow_redirects=True)
-    final_url = next(session.resolve_redirects(response, response.request), None)
-    return final_url.url if final_url else None
+    response = session.get(url, allow_redirects=False)
+
+    try:
+        final_url = response.headers['Location']
+        return final_url
+    except KeyError:
+        print(f"Error getting redirected URL for {url}")
+        return None
 
 def download_json(url, output_base_dir='output'):
     final_url = get_redirected_url(url)
