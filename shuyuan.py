@@ -74,6 +74,7 @@ def get_redirected_url(url):
         return None
 
 
+# 修改 download_json 函数
 def download_json(url, output_base_dir=''):
     final_url = get_redirected_url(url)
 
@@ -97,8 +98,8 @@ def download_json(url, output_base_dir=''):
 
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
-                with open(output_path, 'w') as f:
-                    json.dump(json_content, f, indent=2, ensure_ascii=False)
+                with open(output_path, 'wb') as f:  # 保存为二进制文件
+                    f.write(response.content)
                 print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
                 # Now you can use the original URL for further processing
@@ -200,7 +201,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
             continue
 
         for filename in files:
-            with open(os.path.join(dir_path, filename)) as f:
+            with open(os.path.join(dir_path, filename), 'rb') as f:  # 以二进制模式打开文件
                 data = json.load(f)
                 if isinstance(data, list):  # 确保加载的数据是列表
                     if 'shuyuan' in filename:
@@ -220,8 +221,6 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
     print(f"Merged data saved to {output_path_shuyuans}")
-
-
 
 def main():
     # 存储根目录
