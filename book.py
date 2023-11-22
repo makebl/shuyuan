@@ -66,14 +66,14 @@ def get_redirected_url(url):
         print(f"Response Content: {response.text}")
         return None
 
-def download_json(url, output_folder='output'):
+def download_json(url, output_dir='3.0'):
     final_url = get_redirected_url(url)
 
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # Extract the bookSourceGroup from the URL
-        book_source_group = final_url.split('/')[-2]
+        # Check if the output directory exists, if not, create it
+        os.makedirs(output_dir, exist_ok=True)
 
         # Download the JSON content from the final URL
         response = requests.get(final_url)
@@ -92,10 +92,6 @@ def download_json(url, output_folder='output'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
-                # Create the output folder if it doesn't exist
-                output_dir = os.path.join(output_folder, book_source_group)
-                os.makedirs(output_dir, exist_ok=True)
-
                 output_path = os.path.join(output_dir, f'{id}.json')
 
                 with open(output_path, 'w', encoding='utf-8') as f:
@@ -110,7 +106,7 @@ def download_json(url, output_folder='output'):
     else:
         print(f"Error getting redirected URL for {url}")
 
-def clean_old_files(directory='output'):
+def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
 
     for filename in os.listdir(directory):
@@ -119,18 +115,14 @@ def clean_old_files(directory='output'):
             os.remove(file_path)
             print(f"Deleted old file: {filename}")
 
-def merge_json_files(input_dir='output', output_file='merged.json'):
+def merge_json_files(input_dir, output_file):
     all_data = []
 
-    for folder_name in os.listdir(input_dir):
-        folder_path = os.path.join(input_dir, folder_name)
-        if os.path.isdir(folder_path):
-            for filename in os.listdir(folder_path):
-                if filename.endswith('.json'):
-                    file_path = os.path.join(folder_path, filename)
-                    with open(file_path, 'r') as f:
-                        data = json.load(f)
-                        all_data.extend(data)
+    for filename in os.listdir(input_dir):
+        if filename.endswith('.json'):
+            with open(os.path.join(input_dir, filename), 'r') as f:
+                data = json.load(f)
+                all_data.extend(data)
 
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(all_data, f, indent=2, ensure_ascii=False)
@@ -138,15 +130,20 @@ def merge_json_files(input_dir='output', output_file='merged.json'):
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
 def main():
-    urls = ['https://www.yckceo.com/yuedu/shuyuan/index.html', 'https://www.yckceo.com/yuedu/shuyuans/index.html']
+    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    transformed_urls = parse_and_transform(original_url)
     
-    for url in urls:
-        transformed_urls = parse_and_transform(url)
-        clean_old_files()  # Clean old files before downloading new ones
-        for url, _ in transformed_urls:
-            download_json(url)
+    # Clean old files before downloading new ones
+    clean_old_files()
 
-    merge_json_files()  # Merge downloaded JSON files
+    for url, _ in transformed_urls:
+        # Decide the output directory based on the URL
+        output_dir = '3.0' if '3.0' in url else 'shuyuan'
+        download_json(url, output_dir)
+
+    # Merge downloaded JSON files
+    merge_json_files('3.0', 'merged.json')
+    merge_json_files('shuyuan', 'shuyuan.json')
 
 if __name__ == "__main__":
     main()
