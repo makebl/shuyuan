@@ -126,6 +126,9 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
+    # 删除旧文件
+    clean_old_files()
+
     all_data = {}
 
     for filename in os.listdir(input_dir):
@@ -134,15 +137,14 @@ def merge_json_files(input_dir='', output_file='merged.json'):
                 data = json.load(f)
                 all_data[filename.split('.')[0]] = data
 
-    output_path = os.path.join(input_dir, output_file)
+    # 将文件合并到根目录
+    output_path = os.path.join(output_file)
     with open(output_path, 'w') as f:
-        # Write JSON content with the outermost square brackets
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 def main():
     for url in urls:
         url_data = parse_page(url)
-        clean_old_files()  # Clean old files before downloading new ones
         for url, _ in url_data:
             # 根据不同的url选择不同的输出文件夹
             output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
