@@ -150,7 +150,7 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
 
