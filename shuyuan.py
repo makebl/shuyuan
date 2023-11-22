@@ -133,13 +133,12 @@ def clean_old_files(directory=''):
             except OSError as e:
                 print(f"无法删除文件 {filename}: {e}")
 
-    # 如果传递的是一个文件夹而不是文件路径，最后尝试删除传递的文件夹
-    if os.path.isdir(directory):
-        try:
-            os.rmdir(directory)
-            print(f"删除文件夹: {directory}")
-        except OSError as e:
-            print(f"无法删除文件夹 {directory}: {e}")
+    # 尝试删除传递的文件夹
+    try:
+        os.rmdir(directory)
+        print(f"删除文件夹: {directory}")
+    except OSError as e:
+        print(f"无法删除文件夹 {directory}: {e}")
 
 def merge_json_files(input_dir='', output_file='merged.json'):
     # 如果目录不存在，创建它
@@ -168,6 +167,7 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     output_path = os.path.join(input_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
 
 
