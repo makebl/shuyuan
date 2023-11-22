@@ -42,7 +42,7 @@ def parse_and_transform(url):
                 print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
 
                 # Check if the link is within the specified time range
-                if 1 <= days_ago <= 2:  # Include links from 1 to 3 days ago
+                if 1 <= days_ago <= 4:  # Include links from 1 to 3 days ago
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
@@ -148,7 +148,7 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
 
