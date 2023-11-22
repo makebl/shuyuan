@@ -11,10 +11,16 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'  # 更改了链接
 original_url = url  # 将新的链接赋给 original_url
 
-def parse_page(url):
+def get_redirected_url(url):
     session = requests.Session()
-    response = session.get(url, verify=False, allow_redirects=True)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    response = session.get(url, verify=False, allow_redirects=False)
+    final_url = next(session.resolve_redirects(response, response.request), None)
+    
+    if final_url:
+        scheme = final_url.scheme or 'https'
+        return f"{scheme}://{final_url.netloc}{final_url.path}"
+    else:
+        return None
 
     relevant_links = []
     today = datetime.today().date()
