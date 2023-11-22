@@ -142,6 +142,9 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
+    # 清除旧文件
+    clean_old_files(input_dir, root_dir)
+
     # 使用字典存储不同文件夹的数据
     all_data = {'shuyuan_data': [], 'shuyuans_data': []}
 
@@ -176,6 +179,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
             f.write(json.dumps(data_list, indent=2, ensure_ascii=False))
 
     print(f"合并的数据保存到 {root_dir}")
+
 
 def main():
     # 存储根目录
