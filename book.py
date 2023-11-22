@@ -4,6 +4,7 @@ import os
 from datetime import datetime, timedelta
 import re
 import requests
+import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'  # 更改了链接
