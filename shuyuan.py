@@ -53,6 +53,7 @@ def parse_page(url):
 
     return relevant_links
 
+
 def get_redirected_url(url):
     session = requests.Session()
     response = session.get(url, allow_redirects=False)
