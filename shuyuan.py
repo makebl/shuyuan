@@ -205,6 +205,31 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
 
     # ...
 
+def beautify_json_files(directory='', root_dir=''):
+    # 如果没有传递目录参数，使用当前工作目录
+    directory = directory or os.getcwd()
+    full_path = os.path.join(root_dir, directory)  # 使用绝对路径
+
+    try:
+        # 遍历所有文件夹中的所有 JSON 文件，将其转换为美化格式
+        for filename in os.listdir(full_path):
+            if filename.endswith('.json'):
+                file_path = os.path.join(full_path, filename)
+                try:
+                    with open(file_path, 'r') as f:
+                        # 读取 JSON 数据
+                        json_data = json.load(f)
+                    with open(file_path, 'w') as f:
+                        # 将 JSON 数据以美化格式写回文件
+                        json.dump(json_data, f, indent=2, ensure_ascii=False)
+                    print(f"Beautified file: {file_path}")
+                except Exception as e:
+                    print(f"Error beautifying {file_path}: {e}")
+
+        print(f"Successfully beautified JSON files in {full_path}")
+    except OSError as e:
+        print(f"Unable to beautify JSON files in {full_path}: {e}")
+
 
 def main():
     # 存储根目录
