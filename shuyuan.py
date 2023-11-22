@@ -132,7 +132,7 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
-    all_data = {}
+    all_data = []
 
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
         dir_path = os.path.join(input_dir, dir_name)
@@ -144,17 +144,13 @@ def merge_json_files(input_dir='', output_file='merged.json'):
             if filename.endswith('.json'):
                 with open(os.path.join(dir_path, filename)) as f:
                     data = json.load(f)
-                    # 使用 URL 作为字典的键
-                    url = data.get('url', 'unknown_url')
-                    # 将数据存储在字典中
-                    if url not in all_data:
-                        all_data[url] = []
-                    all_data[url].append(data)
+                    all_data.append(data)
 
     # 将文件合并到根目录
     output_path = os.path.join(input_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
 
 
