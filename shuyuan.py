@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import re
 import urllib3
 import urllib.parse
+import shutil
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -111,33 +112,19 @@ def download_json(url, output_base_dir=''):
         print(f"Error getting redirected URL for {url}")
 
 
+
+
 def clean_old_files(directory=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
 
-    # 删除文件和文件夹
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        try:
-            if os.path.isdir(file_path):
-                # 如果是文件夹，使用递归删除
-                clean_old_files(file_path)
-                os.rmdir(file_path)
-                print(f"删除文件夹: {filename}")
-            elif filename.endswith('.json') and filename != 'me.json':
-                os.remove(file_path)
-                print(f"删除文件: {filename}")
-        except OSError as e:
-            print(f"无法删除 {filename}: {e}")
-
-    # 尝试删除传递的文件夹
     try:
-        os.rmdir(directory)
-        print(f"删除文件夹: {directory}")
+        # 递归删除文件夹及其内容
+        shutil.rmtree(directory)
+        print(f"成功删除文件夹: {directory}")
     except OSError as e:
         print(f"无法删除文件夹 {directory}: {e}")
-    else:
-        print(f"成功删除文件夹: {directory}")
+
 
 
 def merge_json_files(input_dir='', output_file='merged.json'):
