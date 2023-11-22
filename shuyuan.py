@@ -130,7 +130,6 @@ def clean_old_files(directory='', root_dir=''):
 
 
 # 在 merge_json_files 函数中传递 root_dir
-# 在 merge_json_files 函数中传递 root_dir
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
     input_dir = os.path.join(root_dir, input_dir)
@@ -140,8 +139,8 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
         os.makedirs(input_dir)
 
     # 删除旧文件夹
-    clean_old_files(os.path.join(input_dir, 'shuyuan_data'), root_dir)
-    clean_old_files(os.path.join(input_dir, 'shuyuans_data'), root_dir)
+    clean_old_files(os.path.join(root_dir, 'shuyuan_data'), root_dir)
+    clean_old_files(os.path.join(root_dir, 'shuyuans_data'), root_dir)
 
     # 创建新文件夹
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
@@ -165,6 +164,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     output_path = os.path.join(root_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
 
 # 在 main 函数中传递 root_dir
