@@ -126,14 +126,17 @@ def clean_old_files(directory='', root_dir=''):
             try:
                 if os.path.isfile(file_path):
                     os.remove(file_path)
-                elif os.path.isdir(file_path):  # 添加这一行以删除目录
+                    print(f"Deleted file: {file_path}")
+                elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
+                    print(f"Deleted directory: {file_path}")
             except Exception as e:
                 print(f"Error deleting {file_path}: {e}")
 
         print(f"Successfully cleaned old files in {full_path}")
     except OSError as e:
         print(f"Unable to clean old files in {full_path}: {e}")
+
 
 
 
