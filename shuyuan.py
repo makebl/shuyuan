@@ -15,11 +15,6 @@ urls = [
     'https://www.yckceo.com/yuedu/shuyuans/index.html',
 ]
 
-urls = [
-    'https://www.yckceo.com/yuedu/shuyuan/index.html',
-    'https://www.yckceo.com/yuedu/shuyuans/index.html',
-]
-
 # 定义不同网址对应的时间范围，单位为天
 time_ranges = {
     'https://www.yckceo.com/yuedu/shuyuan/index.html': (1, 2),
@@ -63,13 +58,6 @@ def parse_page(url):
 
     return relevant_links
 
-
-
-for url in urls:
-    relevant_links = parse_page(url)
-    print(f"Links for {url}: {relevant_links}")
-
-
 def get_redirected_url(url):
     session = requests.Session()
     response = session.get(url, allow_redirects=False)
@@ -88,7 +76,6 @@ def get_redirected_url(url):
     except KeyError:
         print(f"Error getting redirected URL for {url}")
         return None
-
 
 def download_json(url, output_base_dir=''):
     final_url = get_redirected_url(url)
@@ -130,7 +117,6 @@ def download_json(url, output_base_dir=''):
     else:
         print(f"Error getting redirected URL for {url}")
 
-
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
@@ -154,8 +140,29 @@ def clean_old_files(directory='', root_dir=''):
     except OSError as e:
         print(f"Unable to clean old files in {full_path}: {e}")
 
+def beautify_json_files(directory='', root_dir=''):
+    # 如果没有传递目录参数，使用当前工作目录
+    directory = directory or os.getcwd()
+    full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
+    try:
+        # 美化文件夹中的所有JSON文件
+        for filename in os.listdir(full_path):
+            file_path = os.path.join(full_path, filename)
+            try:
+                if filename.endswith('.json'):
+                    with open(file_path, 'r') as f:
+                        json_content = json.load(f)
+                    with open(file_path, 'w') as f:
+                        # 设置 indent 参数为 2，表示每一层缩进两个空格
+                        json.dump(json_content, f, indent=2, ensure_ascii=False)
+                    print(f"Beautified JSON file: {file_path}")
+            except Exception as e:
+                print(f"Error beautifying {file_path}: {e}")
 
+        print(f"Successfully beautified JSON files in {full_path}")
+    except OSError as e:
+        print(f"Unable to beautify JSON files in {full_path}: {e}")
 
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
@@ -202,6 +209,8 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
             f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
             print(f"合并的数据保存到 {output_path}")
 
+        # 美化合并后的 JSON 文件
+        beautify_json_files(f"{dir_name}.json", root_dir)
 
 def main():
     # 存储根目录
