@@ -130,6 +130,10 @@ def get_output_folder(url):
         # 默认文件夹名称
         return 'unknown_data'
 
+def get_output_filename(url):
+    # 从 URL 中提取文件名
+    return os.path.basename(urllib.parse.urlparse(url).path)
+
 
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
