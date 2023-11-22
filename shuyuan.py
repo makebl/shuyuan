@@ -73,7 +73,7 @@ def download_json(url, output_root='3.0'):
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # Extract the subdirectory name from the URL (either 'shuyuan' or 'shuyuans')
+        # Extract the subdirectory name from the URL ('shuyuan' or 'shuyuans')
         subdirectory = 'shuyuan' if 'shuyuan' in final_url else 'shuyuans'
 
         # Check if the output directory exists, if not, create it
@@ -98,11 +98,11 @@ def download_json(url, output_root='3.0'):
                     link_date = datetime.today().date()
 
                 # Ensure that the file is saved in the specified output directory without subdirectories
-                output_path = os.path.join(output_root, f'{id}.json')
+                output_path = os.path.join(output_dir, f'{id}.json')
 
                 with open(output_path, 'w', encoding='utf-8') as f:
                     f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
-                print(f"Downloaded {id}.json to {output_root}")
+                print(f"Downloaded {id}.json to {output_dir}")
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON for {final_url}: {e}")
                 print(f"Response Content: {response.text}")
@@ -111,6 +111,7 @@ def download_json(url, output_root='3.0'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 
