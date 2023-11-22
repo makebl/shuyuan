@@ -55,7 +55,11 @@ def get_redirected_url(url):
         final_url = response.headers.get('location')
         return final_url
     else:
+        print(f"Error getting redirected URL for {url}")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
         return None
+
 
 
 def download_json(url, output_dir='3.0'):
