@@ -119,14 +119,15 @@ def download_json(url, output_base_dir=''):
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
-    directory = os.path.join(root_dir, directory)  # 使用绝对路径
+    full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
     try:
         # 递归删除文件夹及其内容
-        shutil.rmtree(directory)
-        print(f"成功删除文件夹: {directory}")
+        shutil.rmtree(full_path)
+        print(f"成功删除文件夹: {full_path}")
     except OSError as e:
-        print(f"无法删除文件夹 {directory}: {e}")
+        print(f"无法删除文件夹 {full_path}: {e}")
+
 
 # 在 merge_json_files 函数中传递 root_dir
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
