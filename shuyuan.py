@@ -100,6 +100,14 @@ def download_json(url, output_dir='3.0'):
     else:
         print(f"获取 {url} 重定向URL时出错")
 
+def clean_old_files(directory='3.0'):
+    os.makedirs(directory, exist_ok=True)
+
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        if filename.endswith('.json') and filename != 'me.json':
+            os.remove(file_path)
+            print(f"删除旧文件: {filename}")
 
 def merge_json_files(input_dir='3.0', output_file='merged.json'):
     all_data = {}
