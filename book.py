@@ -1,25 +1,17 @@
+import requests
 from bs4 import BeautifulSoup
 import json
 import os
 from datetime import datetime, timedelta
 import re
-import requests
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'  # 更改了链接
-original_url = url  # 将新的链接赋给 original_url
-
-def get_redirected_url(url):
+def parse_and_transform(url):
     session = requests.Session()
-    response = session.get(url, verify=False, allow_redirects=False)
-    final_url = next(session.resolve_redirects(response, response.request), None)
-    
-    if final_url:
-        scheme = final_url.scheme or 'https'
-        return f"{scheme}://{final_url.netloc}{final_url.path}"
-    else:
-        return None
+    response = session.get(url, verify=False, allow_redirects=True)
+    soup = BeautifulSoup(response.text, 'html.parser')
 
     relevant_links = []
     today = datetime.today().date()
@@ -36,8 +28,10 @@ def get_redirected_url(url):
             if match:
                 value, unit = match.group(1, 2)
                 if unit == '分钟前':
+                    # For minutes, consider them as 1 day
                     days_ago = 1
                 elif unit == '小时前':
+                    # For hours, consider them as 1 day
                     days_ago = 1
                 else:
                     days_ago = int(value)
@@ -46,24 +40,12 @@ def get_redirected_url(url):
 
                 print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
 
-                if 1 <= days_ago <= 6:
-                    json_url = transform_url(href)
+                # Check if the link is within the specified time range
+                if 1 <= days_ago <= 6:  # Include links from 1 to 3 days ago
+                    json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
     return relevant_links
-
-def transform_url(url):
-    if 'shuyuan' in url:
-        return url.replace("content", "json")
-    elif 'shuyuans' in url:
-        return url.replace("shuyuans", "shuyuan")  # Modify as needed
-    else:
-        return url  # Default transformation if no match
-
-def parse_and_transform(url):
-    transformed_url = transform_url(url)
-    urls = parse_page(transformed_url)
-    return [(transform_url(link), date) for link, date in urls]
 
 def get_redirected_url(url):
     session = requests.Session()
@@ -73,30 +55,31 @@ def get_redirected_url(url):
 
 def download_json(url, output_dir='3.0'):
     final_url = get_redirected_url(url)
-    
+
     if final_url:
         print(f"Real URL: {final_url}")
 
-        id = final_url.split('/')[-1].split('.')[0]
-
-        link_date = None
-        for _, date in parse_and_transform(url):
-            if _ == url:
-                link_date = date
-                break
-
-        if link_date is None:
-            link_date = datetime.today().date()
-
-        output_path = os.path.join(output_dir, f'{id}.json')
-
-        os.makedirs(output_dir, exist_ok=True)
-
+        # Download the JSON content from the final URL
         response = requests.get(final_url)
 
         if response.status_code == 200:
             try:
                 json_content = response.json()
+                id = final_url.split('/')[-1].split('.')[0]
+
+                link_date = None
+                for _, date in parse_and_transform(final_url):
+                    if _ == url:
+                        link_date = date
+                        break
+
+                if link_date is None:
+                    link_date = datetime.today().date()
+
+                output_path = os.path.join(output_dir, f'{id}.json')
+
+                os.makedirs(output_dir, exist_ok=True)
+
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
                 print(f"Downloaded {id}.json to {output_dir}")
@@ -131,6 +114,7 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 def main():
+    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
     for url, _ in transformed_urls:
