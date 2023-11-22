@@ -115,23 +115,22 @@ def clean_old_files(directory=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
 
-    # 确保目录存在，如果不存在就创建它
-    os.makedirs(directory, exist_ok=True)
-
+    # 删除文件和文件夹
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if filename.endswith('.json') and filename != 'me.json':
+        if os.path.isdir(file_path):
+            os.rmdir(file_path)
+            print(f"删除文件夹: {filename}")
+        elif filename.endswith('.json') and filename != 'me.json':
             os.remove(file_path)
-            print(f"删除旧文件: {filename}")
-
-
+            print(f"删除文件: {filename}")
 
 def merge_json_files(input_dir='', output_file='merged.json'):
     # 如果目录不存在，创建它
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
-    # 删除旧文件
+    # 删除旧文件夹
     clean_old_files(os.path.join(input_dir, 'shuyuan_data'))
     clean_old_files(os.path.join(input_dir, 'shuyuans_data'))
 
