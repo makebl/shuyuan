@@ -73,8 +73,14 @@ def download_json(url, output_root='.'):
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # 提取 URL 中的子目录名称 ('shuyuan' 或 'shuyuans')
-        subdirectory = 'shuyuan' if 'shuyuan' in final_url else 'shuyuans'
+        # 根据链接是否包含 'shuyuan' 或 'shuyuans' 设置子目录名称
+        if 'shuyuan' in final_url:
+            subdirectory = 'shuyuan'
+        elif 'shuyuans' in final_url:
+            subdirectory = 'shuyuans'
+        else:
+            # 如果既不包含 'shuyuan' 也不包含 'shuyuans'，默认为 '3.0'
+            subdirectory = '3.0'
 
         # 设置输出目录为根目录
         output_dir = os.path.join(output_root, subdirectory)
@@ -111,6 +117,7 @@ def download_json(url, output_root='.'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 def clean_old_files(directory='3.0'):
@@ -159,7 +166,7 @@ def main():
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # 清理旧文件以便下载新文件
 
@@ -174,4 +181,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
