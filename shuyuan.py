@@ -79,7 +79,7 @@ def download_json(url, output_dir='shuyuan'):
                 id = final_url.split('/')[-1].split('.')[0]
 
                 link_date = None
-                for _, date in parse_page():
+                for _, date in parse_page(final_url):  # 传递 final_url
                     if _ == url:
                         link_date = date
                         break
@@ -101,6 +101,7 @@ def download_json(url, output_dir='shuyuan'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 def clean_old_files(directory='shuyuan'):
