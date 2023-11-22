@@ -1,11 +1,9 @@
-import requests
 from bs4 import BeautifulSoup
 import json
-import urllib3
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
 import re
-
+import requests
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'  # 更改了链接
