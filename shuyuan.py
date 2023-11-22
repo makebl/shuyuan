@@ -42,7 +42,7 @@ def parse_and_transform(url):
                 print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
 
                 # Check if the link is within the specified time range
-                if 1 <= days_ago <= 4:  # Include links from 1 to 4 days ago
+                if 1 <= days_ago <= 1:  # Include links from 1 to 4 days ago
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
@@ -98,11 +98,11 @@ def download_json(url, output_root='3.0'):
                     link_date = datetime.today().date()
 
                 # Ensure that the file is saved in the specified output directory without subdirectories
-                output_path = os.path.join(output_dir, f'{id}.json')
+                output_path = os.path.join(output_root, f'{id}.json')
 
                 with open(output_path, 'w', encoding='utf-8') as f:
                     f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
-                print(f"Downloaded {id}.json to {output_dir}")
+                print(f"Downloaded {id}.json to {output_root}")
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON for {final_url}: {e}")
                 print(f"Response Content: {response.text}")
