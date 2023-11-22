@@ -71,17 +71,14 @@ def download_json(url, output_dir='3.0'):
     final_url = get_redirected_url(url)
 
     if final_url:
-        print(f"Processing URL: {url}")
         print(f"Real URL: {final_url}")
 
         # Check if the output directory exists, if not, create it
         if 'shuyuan' in url:
-            output_dir = 'shuyuan'
-        elif 'shuyuans' in url:
             output_dir = '3.0'
+        elif 'shuyuans' in url:
+            output_dir = 'shuyuan'
         os.makedirs(output_dir, exist_ok=True)
-
-        print(f"Downloading to: {output_dir}")
 
         # Download the JSON content from the final URL
         response = requests.get(final_url)
