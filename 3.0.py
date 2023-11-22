@@ -123,7 +123,7 @@ def clean_old_files(directory='3.0'):
             os.remove(file_path)
             print(f"Deleted old file: {filename}")
 
-def merge_json_files(input_dir=os.path.abspath('3.0'), output_file='merged.json'):
+def merge_json_files(input_dir='3.0', output_file='merged.json'):
     all_data = []
 
     for filename in os.listdir(input_dir):
@@ -137,11 +137,10 @@ def merge_json_files(input_dir=os.path.abspath('3.0'), output_file='merged.json'
 
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
-def merge_shuyuan_files(input_dir=os.path.abspath('shuyuan'), output_file='shuyuan.json'):
+def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     all_data = []
 
-    if '3.0' not in os.listdir():
-        os.makedirs('3.0', exist_ok=True)
+    os.makedirs('3.0', exist_ok=True)
 
     for filename in os.listdir(input_dir):
         if filename.endswith('.json'):
@@ -155,6 +154,7 @@ def merge_shuyuan_files(input_dir=os.path.abspath('shuyuan'), output_file='shuyu
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
 def main():
+    # 在 main 函数开始处添加以下代码
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
