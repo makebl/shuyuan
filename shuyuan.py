@@ -48,8 +48,21 @@ def parse_page():
 def get_redirected_url(url):
     session = requests.Session()
     response = session.get(url, verify=False, allow_redirects=False)
-    final_url = next(session.resolve_redirects(response, response.request), None)
-    return final_url.url if final_url else None
+
+    if response.status_code in (301, 302, 303, 307, 308):
+        final_url = response.headers.get('location')
+        if not final_url.startswith('http'):
+            # If the final URL is relative, make it absolute
+            final_url = urllib.parse.urljoin(url, final_url)
+        return final_url
+    elif response.status_code == 200:
+        # If there was no redirection, return the original URL
+        return url
+    else:
+        print(f"Error getting redirected URL for {url}")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
+        return None
 
 def download_json(url, output_dir='shuyuan'):
     final_url = get_redirected_url(url)
