@@ -54,51 +54,54 @@ def get_redirected_url(url):
     final_url = next(session.resolve_redirects(response, response.request), None)
     return final_url.url if final_url else None
 
-def download_json(url, output_dir='3.0'):
+def download_json(url, output_base_dir='output'):
     final_url = get_redirected_url(url)
-
+    
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # 从最终URL中提取ID
-        id = final_url.split('/')[-1].split('.')[0]
-
-        # 根据提供的URL生成适当的JSON下载链接
-        json_url = final_url.replace("content", "json")
-
-        response = requests.get(json_url)
-
+        # Download the JSON content from the final URL
+        response = requests.get(final_url)
+        
         if response.status_code == 200:
             try:
                 json_content = response.json()
+                id = final_url.split('/')[-1].split('.')[0]
 
-                # 从页面解析函数中提取日期
-                link_date = None
-                for _, date in parse_page(url):
-                    if _ == url:
-                        link_date = date
-                        break
+                # Hardcode the subdirectory and filename based on the URL
+                if 'shuyuans' in final_url:
+                    subdirectory = 'shuyuans'
+                    filename = 'shuyuans.json'
+                    download_url = f'https://www.yckceo.com/yuedu/shuyuans/json/id/{id}.json'
+                elif 'shuyuan' in final_url:
+                    subdirectory = 'shuyuan'
+                    filename = 'shuyuan.json'
+                    download_url = f'https://www.yckceo.com/yuedu/shuyuan/json/id/{id}.json'
+                else:
+                    # Handle other cases or raise an error as needed
+                    print(f"Unsupported URL: {final_url}")
+                    return
 
-                if link_date is None:
-                    link_date = datetime.today().date()
-
-                # 根据URL生成适当的输出目录
-                directory_name = url.split('/')[-2]
-                output_path = os.path.join(output_dir, directory_name, f'{id}.json')
-
-                os.makedirs(os.path.join(output_dir, directory_name), exist_ok=True)
+                output_dir = os.path.join(output_base_dir, subdirectory)
+                output_path = os.path.join(output_dir, filename)
+                
+                os.makedirs(output_dir, exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
-                print(f"已下载 {id}.json 到 {output_dir}/{directory_name}")
+                print(f"Downloaded {filename} to {output_dir}")
+
+                # Now you can use the download_url variable for further processing
+                print(f"Download URL: {download_url}")
             except json.JSONDecodeError as e:
-                print(f"解码 {final_url} 的JSON时出错：{e}")
-                print(f"响应内容：{response.text}")
+                print(f"Error decoding JSON for {final_url}: {e}")
+                print(f"Response Content: {response.text}")
         else:
-            print(f"下载 {json_url} 时出错：状态码 {response.status_code}")
-            print(f"响应内容：{response.text}")
+            print(f"Error downloading {final_url}: Status code {response.status_code}")
+            print(f"Response Content: {response.text}")
     else:
-        print(f"获取 {url} 重定向URL时出错")
+        print(f"Error getting redirected URL for {url}")
+
 
 def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
