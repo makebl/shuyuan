@@ -69,9 +69,7 @@ def get_redirected_url(url):
 
 
 def download_json(url, output_root='.'):
-    print(f"Output root: {output_root}")
     final_url = get_redirected_url(url)
-    print(f"Final URL: {final_url}")
 
     if final_url:
         print(f"Real URL: {final_url}")
@@ -123,6 +121,7 @@ def download_json(url, output_root='.'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
