@@ -122,12 +122,15 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
 
     for filename in os.listdir(input_dir):
         if filename.endswith('.json'):
-            with open(os.path.join(input_dir, filename)) as f:
+            with open(os.path.join(input_dir, filename), 'r') as f:
                 data = json.load(f)
                 all_data.extend(data)
 
-    with open(output_file, 'w') as f:
-        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(all_data, f, indent=2, ensure_ascii=False)
+
+    print(f"Successfully merged {len(all_data)} book sources to {output_file}")
+
 
 def main():
     original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
