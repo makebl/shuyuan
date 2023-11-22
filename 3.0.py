@@ -69,7 +69,9 @@ def get_redirected_url(url):
 
 
 def download_json(url, output_root='.'):
+    print(f"Output root: {output_root}")
     final_url = get_redirected_url(url)
+    print(f"Final URL: {final_url}")
 
     if final_url:
         print(f"Real URL: {final_url}")
@@ -80,7 +82,7 @@ def download_json(url, output_root='.'):
             subdirectory = 'shuyuans'
         else:
             subdirectory = '3.0'
-
+  print(f"Output directory: {output_dir}")
         output_dir = os.path.join(output_root, subdirectory)
         os.makedirs(output_dir, exist_ok=True)
 
@@ -155,6 +157,7 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 
 def main():
     # 在 main 函数开始处添加以下代码
+    print("Current working directory:", os.getcwd())
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
