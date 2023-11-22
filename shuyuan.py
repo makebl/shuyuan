@@ -49,9 +49,12 @@ def parse_page(url):
                 # Check if the link is within the specified time range
                 if 1 <= days_ago <= 1:  # Include links from 1 to 3 days ago
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
+                    # Ensure the link points to a JSON file
+                    json_url = json_url.replace('.html', '.json')
                     relevant_links.append((json_url, link_date))
 
     return relevant_links
+
 
 
 def get_redirected_url(url):
