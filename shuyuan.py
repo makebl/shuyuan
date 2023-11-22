@@ -126,15 +126,26 @@ def clean_old_files(directory='', root_dir=''):
     full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
     try:
-        # 递归删除文件夹及其内容
-        shutil.rmtree(full_path)
-        print(f"成功删除文件夹: {full_path}")
+        # 获取目录下的所有文件并删除
+        for filename in os.listdir(full_path):
+            file_path = os.path.join(full_path, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+
+        print(f"成功删除文件夹 {full_path} 下的所有文件")
     except OSError as e:
         print(f"无法删除文件夹 {full_path}: {e}")
 
 
-# 修改 download_json 函数
 def download_json(url, output_base_dir=''):
+    # 调用下载前清理旧文件的函数
+    clean_old_files(output_base_dir, root_dir=output_base_dir)
+
     final_url = get_redirected_url(url)
 
     if final_url:
@@ -153,7 +164,7 @@ def download_json(url, output_base_dir=''):
 
                 # 根据链接中的关键词选择文件夹
                 output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
-                output_path = os.path.join(output_base_dir, output_dir, f"{id}.json")  # 使用 id 作为文件名
+                output_path = os.path.join(output_base_dir, output_dir, filename)
 
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
