@@ -4,6 +4,9 @@ import json
 import os
 from datetime import datetime, timedelta
 import re
+import urllib3
+import urllib.parse
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 urls = [
     'https://www.yckceo.com/yuedu/shuyuan/index.html',
@@ -68,7 +71,7 @@ def get_redirected_url(url):
         return None
 
 
-def download_json(url, output_base_dir='output'):
+def download_json(url, output_base_dir=''):
     final_url = get_redirected_url(url)
     
     if final_url:
@@ -82,26 +85,23 @@ def download_json(url, output_base_dir='output'):
                 json_content = response.json()
                 id = final_url.split('/')[-1].split('.')[0]
 
-                # Hardcode the subdirectory and filename based on the URL
+                # Hardcode the filename based on the URL
                 if 'shuyuans' in final_url:
-                    subdirectory = 'shuyuans'
-                    filename = f'{id}.json'
+                    filename = f'shuyuans_{id}.json'
                 elif 'shuyuan' in final_url:
-                    subdirectory = 'shuyuan'
-                    filename = f'{id}.json'
+                    filename = f'shuyuan_{id}.json'
                 else:
                     # Handle other cases or raise an error as needed
                     print(f"Unsupported URL: {final_url}")
                     return
 
-                output_dir = os.path.join(output_base_dir, subdirectory)
-                output_path = os.path.join(output_dir, filename)
+                output_path = os.path.join(output_base_dir, filename)
                 
-                os.makedirs(output_dir, exist_ok=True)
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
-                print(f"Downloaded {filename} to {output_dir}")
+                print(f"Downloaded {filename} to {output_base_dir}")
 
                 # Now you can use the original URL for further processing
                 print(f"Download URL: {url}")
@@ -114,28 +114,21 @@ def download_json(url, output_base_dir='output'):
     else:
         print(f"Error getting redirected URL for {url}")
 
-
-
-def clean_old_files(directory='3.0'):
-    os.makedirs(directory, exist_ok=True)
-
+def clean_old_files(directory=''):
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         if filename.endswith('.json') and filename != 'me.json':
             os.remove(file_path)
             print(f"删除旧文件: {filename}")
 
-def merge_json_files(input_dir='3.0', output_file='merged.json'):
+def merge_json_files(input_dir='', output_file='merged.json'):
     all_data = {}
 
-    for directory_name in os.listdir(input_dir):
-        directory_path = os.path.join(input_dir, directory_name)
-        if os.path.isdir(directory_path):
-            for filename in os.listdir(directory_path):
-                if filename.endswith('.json'):
-                    with open(os.path.join(directory_path, filename)) as f:
-                        data = json.load(f)
-                        all_data[filename.split('.')[0]] = data
+    for filename in os.listdir(input_dir):
+        if filename.endswith('.json'):
+            with open(os.path.join(input_dir, filename)) as f:
+                data = json.load(f)
+                all_data[filename.split('.')[0]] = data
 
     with open(output_file, 'w') as f:
         # Write JSON content with the outermost square brackets
@@ -146,9 +139,9 @@ def main():
         url_data = parse_page(url)
         clean_old_files()  # Clean old files before downloading new ones
         for url, _ in url_data:
-            download_json(url)
+            download_json(url, output_base_dir=url.split('/')[-2])
 
-    merge_json_files()  # Merge downloaded JSON files
+    merge_json_files(input_dir='', output_file='merged.json')  # Merge downloaded JSON files
 
 if __name__ == "__main__":
     main()
