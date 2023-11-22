@@ -185,7 +185,6 @@ def download_json(url, output_base_dir=''):
     else:
         print(f"Error getting redirected URL for {url}")
 
-# 修改 merge_json_files 函数
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
     input_dir = os.path.join(root_dir, input_dir)
@@ -197,13 +196,15 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     all_data_shuyuan = []  # 用于保存第一个 URL 的数据
     all_data_shuyuans = []  # 用于保存第二个 URL 的数据
 
+    # 添加对第一个 URL 的处理
     for url, _ in parse_page(urls[0]):
         # 根据不同的url选择不同的输出文件夹
         output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
-    for url, _ in parse_page(urls[1]):  # 添加对第二个 URL 的处理
+    # 添加对第二个 URL 的处理
+    for url, _ in parse_page(urls[1]):
         # 根据不同的url选择不同的输出文件夹
         output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
@@ -212,31 +213,28 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 打印文件夹中的文件列表
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
         dir_path = os.path.join(root_dir, dir_name)
-        files = [f for f in os.listdir(dir_path) if f.endswith('.json')]  # 只选择 .json 文件
-        print(f"Files in {dir_path}: {files}")
+        print(f"Files in {dir_path}: {os.listdir(dir_path)}")
 
-        if not os.path.exists(dir_path) or not files:  # 如果文件夹不存在或文件为空，则跳过
-            print(f"文件夹不存在或为空: {dir_path}")
+        if not os.path.exists(dir_path):
+            print(f"文件夹不存在: {dir_path}")
             continue
 
-        for filename in files:
-            with open(os.path.join(dir_path, filename), 'rb') as f:  # 以二进制模式打开文件
-                data = json.load(f)
-                if isinstance(data, list):  # 确保加载的数据是列表
+        for filename in os.listdir(dir_path):
+            if filename.endswith('.json'):
+                with open(os.path.join(dir_path, filename)) as f:
+                    data = json.load(f)
                     if 'shuyuan' in filename:
-                        all_data_shuyuan.extend(data)  # 将数据添加到第一个列表中
+                        all_data_shuyuan.append(data)  # 将数据添加到第一个列表中
                     elif 'shuyuans' in filename:
-                        all_data_shuyuans.extend(data)  # 将数据添加到第二个列表中
-                else:
-                    print(f"Invalid data format in {filename}")
+                        all_data_shuyuans.append(data)  # 将数据添加到第二个列表中
 
     # 将文件合并到根目录
-    output_path_shuyuan = os.path.join(root_dir, 'shuyuan.json')
+    output_path_shuyuan = os.path.join(root_dir, output_file)
     with open(output_path_shuyuan, 'w') as f:
         f.write(json.dumps(all_data_shuyuan, indent=2, ensure_ascii=False))
     print(f"Merged data saved to {output_path_shuyuan}")
 
-    output_path_shuyuans = os.path.join(root_dir, 'shuyuans.json')
+    output_path_shuyuans = os.path.join(root_dir, output_file)
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
     print(f"Merged data saved to {output_path_shuyuans}")
