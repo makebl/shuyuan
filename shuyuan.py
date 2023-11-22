@@ -53,11 +53,20 @@ def get_redirected_url(url):
     response = session.get(url, allow_redirects=False)
 
     try:
-        final_url = response.headers['Location']
-        return final_url
+        if response.status_code == 302:
+            # Handling the case where the URL ends with .html and is redirected
+            final_url = response.headers['Location']
+            return final_url
+        elif response.status_code == 200:
+            # Handling the case where the URL directly returns content (not a redirection)
+            return url
+        else:
+            print(f"Unexpected status code {response.status_code} for {url}")
+            return None
     except KeyError:
         print(f"Error getting redirected URL for {url}")
         return None
+
 
 def download_json(url, output_base_dir='output'):
     final_url = get_redirected_url(url)
