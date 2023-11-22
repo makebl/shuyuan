@@ -50,15 +50,22 @@ def parse_and_transform(url):
 def get_redirected_url(url):
     session = requests.Session()
     response = session.get(url, verify=False, allow_redirects=False)
-    
+
     if response.status_code in (301, 302, 303, 307, 308):
         final_url = response.headers.get('location')
+        if not final_url.startswith('http'):
+            # If the final URL is relative, make it absolute
+            final_url = urllib.parse.urljoin(url, final_url)
         return final_url
+    elif response.status_code == 200:
+        # If there was no redirection, return the original URL
+        return url
     else:
         print(f"Error getting redirected URL for {url}")
         print(f"Status Code: {response.status_code}")
         print(f"Response Content: {response.text}")
         return None
+
 
 
 
