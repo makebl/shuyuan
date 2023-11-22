@@ -74,11 +74,14 @@ def download_json(url, output_root='.'):
     if final_url:
         print(f"Real URL: {final_url}")
 
+    if final_url:
+        print(f"Real URL: {final_url}")
+
         # 根据链接是否包含 'shuyuan' 或 'shuyuans' 设置子目录名称
         if 'shuyuan' in final_url:
             subdirectory = 'shuyuan'
         elif 'shuyuans' in final_url:
-            subdirectory = 'shuyuans'
+            subdirectory = '3.0'
         else:
             # 如果既不包含 'shuyuan' 也不包含 'shuyuans'，默认为 '3.0'
             subdirectory = '3.0'
@@ -90,35 +93,11 @@ def download_json(url, output_root='.'):
         # 输出创建的输出目录
         print(f"Output directory: {output_dir}")
 
-        # 下载最终 URL 的 JSON 内容
-        response = requests.get(final_url)
+        # ... (之后的代码)
 
-        if response.status_code == 200:
-            try:
-                json_content = response.json()
-                id = final_url.split('/')[-1].split('.')[0]
-
-                link_date = None
-                for _, date in parse_and_transform(final_url):
-                    if _ == url:
-                        link_date = date
-                        break
-
-                if link_date is None:
-                    link_date = datetime.today().date()
-
-                # 确保文件保存在指定的输出目录中，而不是子目录中
-                output_path = os.path.join(output_dir, f'{id}.json')
-
-                with open(output_path, 'w', encoding='utf-8') as f:
-                    f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
-                print(f"Downloaded {id}.json to {output_dir}")
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON for {final_url}: {e}")
-                print(f"Response Content: {response.text}")
-        else:
-            print(f"Error downloading {final_url}: Status code {response.status_code}")
-            print(f"Response Content: {response.text}")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
+        print(f"Downloaded {id}.json to {output_dir}")
     else:
         print(f"Error getting redirected URL for {url}")
 
