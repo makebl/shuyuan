@@ -74,16 +74,23 @@ def download_json(url, output_root='.'):
     if final_url:
         print(f"Real URL: {final_url}")
 
+        # 根据链接是否包含 'shuyuan' 或 'shuyuans' 设置子目录名称
         if 'shuyuan' in final_url:
             subdirectory = 'shuyuan'
         elif 'shuyuans' in final_url:
             subdirectory = 'shuyuans'
         else:
+            # 如果既不包含 'shuyuan' 也不包含 'shuyuans'，默认为 '3.0'
             subdirectory = '3.0'
 
+        # 设置输出目录为根目录
         output_dir = os.path.join(output_root, subdirectory)
         os.makedirs(output_dir, exist_ok=True)
 
+        # 输出创建的输出目录
+        print(f"Output directory: {output_dir}")
+
+        # 下载最终 URL 的 JSON 内容
         response = requests.get(final_url)
 
         if response.status_code == 200:
@@ -100,6 +107,7 @@ def download_json(url, output_root='.'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
+                # 确保文件保存在指定的输出目录中，而不是子目录中
                 output_path = os.path.join(output_dir, f'{id}.json')
 
                 with open(output_path, 'w', encoding='utf-8') as f:
@@ -113,6 +121,7 @@ def download_json(url, output_root='.'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
@@ -155,10 +164,11 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 
 def main():
     # 在 main 函数开始处添加以下代码
+    print("Current working directory:", os.getcwd())
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()
 
