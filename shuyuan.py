@@ -174,12 +174,14 @@ def main():
             download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
             print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
         # 根据不同的url选择不同的输出文件名
+        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
         output_file = 'shuyuan.json' if 'shuyuan' in url else 'shuyuans.json'
 
-        # 使用不同的文件夹调用 merge_json_files，并传递 root_dir
-        merge_json_files(input_dir=root_dir, output_file=output_file, root_dir=root_dir)
+        # 使用不同的文件夹调用 merge_json_files，并传递正确的 input_dir
+        merge_json_files(input_dir=os.path.join(root_dir, output_dir), output_file=output_file, root_dir=root_dir)
 
 if __name__ == "__main__":
     main()
+
 
 
