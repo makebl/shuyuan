@@ -50,8 +50,13 @@ def parse_and_transform(url):
 def get_redirected_url(url):
     session = requests.Session()
     response = session.get(url, verify=False, allow_redirects=False)
-    final_url = response.headers.get('location')
-    return final_url
+    
+    if response.status_code in (301, 302, 303, 307, 308):
+        final_url = response.headers.get('location')
+        return final_url
+    else:
+        return None
+
 
 def download_json(url, output_dir='3.0'):
     final_url = get_redirected_url(url)
