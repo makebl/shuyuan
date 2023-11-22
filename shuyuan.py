@@ -196,6 +196,12 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     all_data_shuyuan = []  # 用于保存第一个 URL 的数据
     all_data_shuyuans = []  # 用于保存第二个 URL 的数据
 
+    # 清空目标文件夹
+    for dir_name in ['shuyuan_data', 'shuyuans_data']:
+        dir_path = os.path.join(root_dir, dir_name)
+        if os.path.exists(dir_path):
+            shutil.rmtree(dir_path)
+
     # 添加对第一个 URL 的处理
     for url, _ in parse_page(urls[0]):
         # 根据不同的url选择不同的输出文件夹
@@ -213,7 +219,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 打印文件夹中的文件列表
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
         dir_path = os.path.join(root_dir, dir_name)
-        print(f"Files in {dir_path}: {os.listdir(dir_path)}")
+        print(f"{dir_path} 中的文件: {os.listdir(dir_path)}")
 
         if not os.path.exists(dir_path):
             print(f"文件夹不存在: {dir_path}")
@@ -232,12 +238,13 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     output_path_shuyuan = os.path.join(root_dir, output_file)
     with open(output_path_shuyuan, 'w') as f:
         f.write(json.dumps(all_data_shuyuan, indent=2, ensure_ascii=False))
-    print(f"Merged data saved to {output_path_shuyuan}")
+    print(f"合并的数据保存到 {output_path_shuyuan}")
 
     output_path_shuyuans = os.path.join(root_dir, output_file)
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
-    print(f"Merged data saved to {output_path_shuyuans}")
+    print(f"合并的数据保存到 {output_path_shuyuans}")
+
 
 def main():
     # 存储根目录
