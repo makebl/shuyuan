@@ -49,12 +49,9 @@ def parse_page(url):
                 # Check if the link is within the specified time range
                 if 1 <= days_ago <= 1:  # Include links from 1 to 3 days ago
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
-                    # Ensure the link points to a JSON file
-                    json_url = json_url.replace('.html', '.json')
                     relevant_links.append((json_url, link_date))
 
     return relevant_links
-
 
 
 def get_redirected_url(url):
@@ -78,9 +75,6 @@ def get_redirected_url(url):
 
 
 def download_json(url, output_base_dir=''):
-    # 调用下载前清理旧文件的函数
-    clean_old_files(output_base_dir, root_dir=output_base_dir)
-
     final_url = get_redirected_url(url)
 
     if final_url:
@@ -95,18 +89,16 @@ def download_json(url, output_base_dir=''):
                 id = final_url.split('/')[-1].split('.')[0]
 
                 # 获取文件名
-                filename = get_output_filename(url)
+                filename = os.path.basename(urllib.parse.urlparse(final_url).path)
 
                 # 根据链接中的关键词选择文件夹
-                output_dir = get_output_folder(url)
+                output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
                 output_path = os.path.join(output_base_dir, output_dir, filename)
 
-                # 确保目录存在
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
-                with open(output_path, 'wb') as f:  # 使用二进制模式写入文件
-                    f.write(response.content)
-
+                with open(output_path, 'w') as f:
+                    json.dump(json_content, f, indent=2, ensure_ascii=False)
                 print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
                 # Now you can use the original URL for further processing
@@ -120,20 +112,6 @@ def download_json(url, output_base_dir=''):
     else:
         print(f"Error getting redirected URL for {url}")
 
-def get_output_folder(url):
-    # 根据 URL 中的关键词选择文件夹
-    if 'shuyuan' in url:
-        return 'shuyuan_data'
-    elif 'shuyuans' in url:
-        return 'shuyuans_data'
-    else:
-        # 默认文件夹名称
-        return 'unknown_data'
-
-def get_output_filename(url):
-    # 从 URL 中提取文件名
-    return os.path.basename(urllib.parse.urlparse(url).path)
-
 
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
@@ -141,35 +119,12 @@ def clean_old_files(directory='', root_dir=''):
     full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
     try:
-        # 获取目录下的所有文件并删除
-        for filename in os.listdir(full_path):
-            file_path = os.path.join(full_path, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except Exception as e:
-                print(f"Error deleting {file_path}: {e}")
-
-        print(f"成功删除文件夹 {full_path} 下的所有文件")
+        # 递归删除文件夹及其内容
+        shutil.rmtree(full_path)
+        print(f"成功删除文件夹: {full_path}")
     except OSError as e:
         print(f"无法删除文件夹 {full_path}: {e}")
 
-
-def download_json(url, output_base_dir=''):
-    # 修改输出目录为绝对路径
-    output_dir = os.path.join(output_base_dir, get_output_folder(url))
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    # 修改输出文件为绝对路径
-    output_file = os.path.join(output_dir, get_output_filename(url))
-
-    # 下载文件
-    response = requests.get(url)
-    with open(output_file, 'wb') as f:
-        f.write(response.content)
 
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
@@ -179,27 +134,46 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
-    all_data = []  # 用于保存所有 URL 的数据
+    all_data_shuyuan = []
+    all_data_shuyuans = []
 
-    # 处理所有 URL
-    for url, _ in parse_page(urls[0]) + parse_page(urls[1]):
+    for url, _ in parse_page(urls[0]):
         # 根据不同的url选择不同的输出文件夹
-        output_dir = os.path.join(root_dir, get_output_folder(url))
+        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
-        # 将文件添加到 all_data 中
-        output_file_path = os.path.join(output_dir, get_output_filename(url))
-        with open(output_file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            all_data.append(data)
+    for url, _ in parse_page(urls[1]):  # 添加对第二个 URL 的处理
+        # 根据不同的url选择不同的输出文件夹
+        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
+        download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
+        print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
+
+    for dir_name in ['shuyuan_data', 'shuyuans_data']:
+        dir_path = os.path.join(root_dir, dir_name)
+        if not os.path.exists(dir_path):
+            print(f"文件夹不存在: {dir_path}")
+            continue
+
+        for filename in os.listdir(dir_path):
+            if filename.endswith('.json'):
+                with open(os.path.join(dir_path, filename)) as f:
+                    data = json.load(f)
+                    if 'shuyuan' in filename:
+                        all_data_shuyuan.append(data)
+                    elif 'shuyuans' in filename:
+                        all_data_shuyuans.append(data)
 
     # 将文件合并到根目录
-    output_path = os.path.join(root_dir, output_file)
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+    output_path_shuyuan = os.path.join(root_dir, 'shuyuan.json')
+    with open(output_path_shuyuan, 'w') as f:
+        f.write(json.dumps(all_data_shuyuan, indent=2, ensure_ascii=False))
 
-    print(f"合并的数据保存到 {output_path}")
+    output_path_shuyuans = os.path.join(root_dir, 'shuyuans.json')
+    with open(output_path_shuyuans, 'w') as f:
+        f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
+
+
 
 def main():
     # 存储根目录
