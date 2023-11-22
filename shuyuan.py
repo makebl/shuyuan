@@ -145,45 +145,18 @@ def clean_old_files(directory='', root_dir=''):
 
 
 def download_json(url, output_base_dir=''):
-    # 调用下载前清理旧文件的函数
-    clean_old_files(output_base_dir, root_dir=output_base_dir)
+    # 修改输出目录为绝对路径
+    output_dir = os.path.join(output_base_dir, get_output_folder(url))
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    final_url = get_redirected_url(url)
+    # 修改输出文件为绝对路径
+    output_file = os.path.join(output_dir, get_output_filename(url))
 
-    if final_url:
-        print(f"Real URL: {final_url}")
-
-        # 下载 JSON 内容
-        response = requests.get(final_url, verify=True)  # 添加 verify=True 进行 SSL 验证
-
-        if response.status_code == 200:
-            try:
-                json_content = response.json()
-                id = final_url.split('/')[-1].split('.')[0]
-
-                # 获取文件名
-                filename = os.path.basename(urllib.parse.urlparse(final_url).path)
-
-                # 根据链接中的关键词选择文件夹
-                output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
-                output_path = os.path.join(output_base_dir, output_dir, filename)
-
-                os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
-
-                with open(output_path, 'w') as f:
-                    json.dump(json_content, f, indent=2, ensure_ascii=False)
-                print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
-
-                # Now you can use the original URL for further processing
-                print(f"Download URL: {url}")
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON for {final_url}: {e}")
-                print(f"Response Content: {response.text}")
-        else:
-            print(f"Error downloading {final_url}: Status code {response.status_code}")
-            print(f"Response Content: {response.text}")
-    else:
-        print(f"Error getting redirected URL for {url}")
+    # 下载文件
+    response = requests.get(url)
+    with open(output_file, 'wb') as f:
+        f.write(response.content)
 
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
@@ -205,14 +178,14 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 添加对第一个 URL 的处理
     for url, _ in parse_page(urls[0]):
         # 根据不同的url选择不同的输出文件夹
-        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
+        output_dir = os.path.join(root_dir, get_output_folder(url))
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
     # 添加对第二个 URL 的处理
     for url, _ in parse_page(urls[1]):
         # 根据不同的url选择不同的输出文件夹
-        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
+        output_dir = os.path.join(root_dir, get_output_folder(url))
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
@@ -244,7 +217,6 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
     print(f"合并的数据保存到 {output_path_shuyuans}")
-
 
 def main():
     # 存储根目录
