@@ -145,7 +145,10 @@ def main():
         for url, _ in url_data:
             download_json(url, output_base_dir=url.split('/')[-2])
 
-    merge_json_files(input_dir='', output_file='merged.json')  # Merge downloaded JSON files
+        # 根据不同的url选择不同的输出文件名
+        output_file = 'shuyuan.json' if 'shuyuan' in url else 'shuyuans.json'
+        merge_json_files(input_dir='', output_file=output_file)  # Merge downloaded JSON files
 
 if __name__ == "__main__":
     main()
+
