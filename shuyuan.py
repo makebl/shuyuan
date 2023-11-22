@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import re
 import urllib3
 import urllib.parse
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 urls = [
@@ -130,19 +131,14 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     clean_old_files(os.path.join(input_dir, 'shuyuan_data'))
     clean_old_files(os.path.join(input_dir, 'shuyuans_data'))
 
-    all_data = {}
+    all_data = []
 
-    for filename in os.listdir(os.path.join(input_dir, 'shuyuan_data')):
-        if filename.endswith('.json'):
-            with open(os.path.join(input_dir, 'shuyuan_data', filename)) as f:
-                data = json.load(f)
-                all_data[filename.split('.')[0]] = data
-
-    for filename in os.listdir(os.path.join(input_dir, 'shuyuans_data')):
-        if filename.endswith('.json'):
-            with open(os.path.join(input_dir, 'shuyuans_data', filename)) as f:
-                data = json.load(f)
-                all_data[filename.split('.')[0]] = data
+    for dir_name in ['shuyuan_data', 'shuyuans_data']:
+        for filename in os.listdir(os.path.join(input_dir, dir_name)):
+            if filename.endswith('.json'):
+                with open(os.path.join(input_dir, dir_name, filename)) as f:
+                    data = json.load(f)
+                    all_data.append(data)
 
     # 将文件合并到根目录
     output_path = os.path.join(input_dir, output_file)
