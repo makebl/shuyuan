@@ -7,7 +7,6 @@ import re
 
 urls = [
     'https://www.yckceo.com/yuedu/shuyuan/index.html',
-    # Add your second URL here
     'https://www.yckceo.com/yuedu/shuyuans/index.html',
 ]
 
@@ -78,13 +77,15 @@ def download_json(url, output_dir='3.0'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
-                output_path = os.path.join(output_dir, f'{id}.json')
+                # Generate the appropriate output directory based on the URL
+                directory_name = url.split('/')[-2]
+                output_path = os.path.join(output_dir, directory_name, f'{id}.json')
 
-                os.makedirs(output_dir, exist_ok=True)
+                os.makedirs(os.path.join(output_dir, directory_name), exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
-                print(f"Downloaded {id}.json to {output_dir}")
+                print(f"Downloaded {id}.json to {output_dir}/{directory_name}")
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON for {final_url}: {e}")
                 print(f"Response Content: {response.text}")
@@ -104,15 +105,19 @@ def clean_old_files(directory='3.0'):
             print(f"Deleted old file: {filename}")
 
 def merge_json_files(input_dir='3.0', output_file='merged.json'):
-    all_data = []
+    all_data = {}
 
-    for filename in os.listdir(input_dir):
-        if filename.endswith('.json'):
-            with open(os.path.join(input_dir, filename)) as f:
-                data = json.load(f)
-                all_data.extend(data)
+    for directory_name in os.listdir(input_dir):
+        directory_path = os.path.join(input_dir, directory_name)
+        if os.path.isdir(directory_path):
+            for filename in os.listdir(directory_path):
+                if filename.endswith('.json'):
+                    with open(os.path.join(directory_path, filename)) as f:
+                        data = json.load(f)
+                        all_data[filename.split('.')[0]] = data
 
     with open(output_file, 'w') as f:
+        # Write JSON content with the outermost square brackets
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 def main():
