@@ -47,7 +47,7 @@ def parse_page():
 
 def get_redirected_url(url):
     session = requests.Session()
-    response = session.get(url, verify=False, allow_redirects=False)
+    response = session.get(url, verify=True, allow_redirects=True)
 
     if response.status_code in (301, 302, 303, 307, 308):
         final_url = response.headers.get('location')
