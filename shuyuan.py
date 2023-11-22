@@ -95,17 +95,18 @@ def download_json(url, output_base_dir=''):
                 id = final_url.split('/')[-1].split('.')[0]
 
                 # 获取文件名
-                filename = os.path.basename(urllib.parse.urlparse(final_url).path)
+                filename = get_output_filename(url)
 
                 # 根据链接中的关键词选择文件夹
-                output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
+                output_dir = get_output_folder(url)
                 output_path = os.path.join(output_base_dir, output_dir, filename)
 
                 # 确保目录存在
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
-                with open(output_path, 'w') as f:
-                    json.dump(json_content, f, indent=2, ensure_ascii=False)
+                with open(output_path, 'wb') as f:  # 使用二进制模式写入文件
+                    f.write(response.content)
+
                 print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
                 # Now you can use the original URL for further processing
@@ -168,57 +169,27 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
-    all_data_shuyuan = []  # 用于保存第一个 URL 的数据
-    all_data_shuyuans = []  # 用于保存第二个 URL 的数据
+    all_data = []  # 用于保存所有 URL 的数据
 
-    # 清空目标文件夹
-    for dir_name in ['shuyuan_data', 'shuyuans_data']:
-        dir_path = os.path.join(root_dir, dir_name)
-        if os.path.exists(dir_path):
-            shutil.rmtree(dir_path)
-
-    # 添加对第一个 URL 的处理
-    for url, _ in parse_page(urls[0]):
+    # 处理所有 URL
+    for url, _ in parse_page(urls[0]) + parse_page(urls[1]):
         # 根据不同的url选择不同的输出文件夹
         output_dir = os.path.join(root_dir, get_output_folder(url))
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
-    # 添加对第二个 URL 的处理
-    for url, _ in parse_page(urls[1]):
-        # 根据不同的url选择不同的输出文件夹
-        output_dir = os.path.join(root_dir, get_output_folder(url))
-        download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
-        print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
-
-    # 打印文件夹中的文件列表
-    for dir_name in ['shuyuan_data', 'shuyuans_data']:
-        dir_path = os.path.join(root_dir, dir_name)
-        print(f"{dir_path} 中的文件: {os.listdir(dir_path)}")
-
-        if not os.path.exists(dir_path):
-            print(f"文件夹不存在: {dir_path}")
-            continue
-
-        for filename in os.listdir(dir_path):
-            if filename.endswith('.json'):
-                with open(os.path.join(dir_path, filename)) as f:
-                    data = json.load(f)
-                    if 'shuyuan' in filename:
-                        all_data_shuyuan.append(data)  # 将数据添加到第一个列表中
-                    elif 'shuyuans' in filename:
-                        all_data_shuyuans.append(data)  # 将数据添加到第二个列表中
+        # 将文件添加到 all_data 中
+        output_file_path = os.path.join(output_dir, get_output_filename(url))
+        with open(output_file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            all_data.append(data)
 
     # 将文件合并到根目录
-    output_path_shuyuan = os.path.join(root_dir, output_file)
-    with open(output_path_shuyuan, 'w') as f:
-        f.write(json.dumps(all_data_shuyuan, indent=2, ensure_ascii=False))
-    print(f"合并的数据保存到 {output_path_shuyuan}")
+    output_path = os.path.join(root_dir, output_file)
+    with open(output_path, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
-    output_path_shuyuans = os.path.join(root_dir, output_file)
-    with open(output_path_shuyuans, 'w') as f:
-        f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
-    print(f"合并的数据保存到 {output_path_shuyuans}")
+    print(f"合并的数据保存到 {output_path}")
 
 def main():
     # 存储根目录
