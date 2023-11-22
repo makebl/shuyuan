@@ -81,36 +81,38 @@ def download_json(url, output_base_dir=''):
         print(f"Real URL: {final_url}")
 
         # 下载 JSON 内容
-        response = requests.get(final_url, verify=True)  # 添加 verify=True 进行 SSL 验证
+        json_url = final_url.replace('.html', '.json')  # 将.html替换为.json
+        response = requests.get(json_url, verify=True)  # 使用正确的JSON URL进行请求
 
         if response.status_code == 200:
             try:
                 json_content = response.json()
-                id = final_url.split('/')[-1].split('.')[0]
+                id = json_url.split('/')[-1].split('.')[0]
 
                 # 获取文件名
-                filename = os.path.basename(urllib.parse.urlparse(final_url).path)
+                filename = os.path.basename(urllib.parse.urlparse(json_url).path)
 
                 # 根据链接中的关键词选择文件夹
-                output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
+                output_dir = 'shuyuan_data' if 'shuyuan' in json_url else 'shuyuans_data'
                 output_path = os.path.join(output_base_dir, output_dir, filename)
 
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
-                with open(output_path, 'w', encoding='utf-8') as f:
+                with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
                 print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
                 # Now you can use the original URL for further processing
                 print(f"Download URL: {url}")
             except json.JSONDecodeError as e:
-                print(f"Error decoding JSON for {final_url}: {e}")
+                print(f"Error decoding JSON for {json_url}: {e}")
                 print(f"Response Content: {response.text}")
         else:
-            print(f"Error downloading {final_url}: Status code {response.status_code}")
+            print(f"Error downloading {json_url}: Status code {response.status_code}")
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
@@ -130,6 +132,7 @@ def clean_old_files(directory='', root_dir=''):
         print(f"Successfully cleaned old files in {full_path}")
     except OSError as e:
         print(f"Unable to clean old files in {full_path}: {e}")
+
 
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
