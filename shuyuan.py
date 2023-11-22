@@ -83,7 +83,7 @@ def download_json(url, output_base_dir=''):
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # 下载 JSON 内容
+
         json_url = final_url.replace('.html', '.json')
         response = requests.get(json_url, verify=True) 
 
