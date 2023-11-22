@@ -182,6 +182,9 @@ def main():
         merge_shuyuan_files()  # 合并 'shuyuan' 子目录中下载的 JSON 文件
 
 if __name__ == "__main__":
+    os.makedirs('3.0', exist_ok=True)  # 移动到这里
+    os.makedirs('shuyuan', exist_ok=True)  # 移动到这里
     main()
+
 
 
