@@ -143,6 +143,12 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
         download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
+    for url, _ in parse_page(urls[1]):  # 添加对第二个 URL 的处理
+        # 根据不同的url选择不同的输出文件夹
+        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
+        download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
+        print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
+
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
         dir_path = os.path.join(root_dir, dir_name)
         if not os.path.exists(dir_path):
@@ -166,6 +172,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     output_path_shuyuans = os.path.join(root_dir, 'shuyuans.json')
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
+
 
 
 def main():
