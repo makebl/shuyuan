@@ -67,20 +67,20 @@ def get_redirected_url(url):
         print(f"Response Content: {response.text}")
         return None
 
-def download_json(url, output_root='3.0'):
+def download_json(url, output_root='.'):
     final_url = get_redirected_url(url)
 
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # Extract the subdirectory name from the URL ('shuyuan' or 'shuyuans')
+        # 提取 URL 中的子目录名称 ('shuyuan' 或 'shuyuans')
         subdirectory = 'shuyuan' if 'shuyuan' in final_url else 'shuyuans'
 
-        # Check if the output directory exists, if not, create it
+        # 设置输出目录为根目录
         output_dir = os.path.join(output_root, subdirectory)
         os.makedirs(output_dir, exist_ok=True)
 
-        # Download the JSON content from the final URL
+        # 下载最终 URL 的 JSON 内容
         response = requests.get(final_url)
 
         if response.status_code == 200:
@@ -97,7 +97,7 @@ def download_json(url, output_root='3.0'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
-                # Ensure that the file is saved in the specified output directory without subdirectories
+                # 确保文件保存在指定的输出目录中，而不是子目录中
                 output_path = os.path.join(output_dir, f'{id}.json')
 
                 with open(output_path, 'w', encoding='utf-8') as f:
@@ -111,10 +111,6 @@ def download_json(url, output_root='3.0'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
-
-
-
-
 
 
 def clean_old_files(directory='3.0'):
@@ -161,16 +157,16 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 def main():
     original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
-    clean_old_files()  # Clean old files before downloading new ones
+    clean_old_files()  # 清理旧文件以便下载新文件
 
     for url, _ in transformed_urls:
         download_json(url)
 
-    merge_json_files()  # Merge downloaded JSON files for the '3.0' subdirectory
+    merge_json_files()  # 合并 '3.0' 子目录中下载的 JSON 文件
 
-    # Only call merge_shuyuan_files if the 'shuyuan' directory is present
+    # 仅在 'shuyuan' 目录存在时调用 merge_shuyuan_files
     if 'shuyuan' in os.listdir():
-        merge_shuyuan_files()  # Merge downloaded JSON files for the 'shuyuan' subdirectory
+        merge_shuyuan_files()  # 合并 'shuyuan' 子目录中下载的 JSON 文件
 
 if __name__ == "__main__":
     main()
