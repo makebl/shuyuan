@@ -166,9 +166,6 @@ def merge_json_files(input_dir='', output_file='merged.json'):
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 
-
-
-
 def main():
     for url in urls:
         url_data = parse_page(url)
