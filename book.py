@@ -65,6 +65,7 @@ def get_redirected_url(url):
         print(f"Status Code: {response.status_code}")
         print(f"Response Content: {response.text}")
         return None
+        
 def download_json(url, output_dir='3.0'):
     final_url = get_redirected_url(url)
 
@@ -72,6 +73,8 @@ def download_json(url, output_dir='3.0'):
         print(f"Real URL: {final_url}")
 
         # Check if the output directory exists, if not, create it
+        if 'shuyuan' in url:
+            output_dir = 'shuyuan'
         os.makedirs(output_dir, exist_ok=True)
 
         # Download the JSON content from the final URL
@@ -106,16 +109,7 @@ def download_json(url, output_dir='3.0'):
     else:
         print(f"Error getting redirected URL for {url}")
 
-def clean_old_files(directory='3.0'):
-    os.makedirs(directory, exist_ok=True)
-
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        if filename.endswith('.json') and filename != 'me.json':
-            os.remove(file_path)
-            print(f"Deleted old file: {filename}")
-
-def merge_json_files(input_dir='3.0', output_file='merged.json'):
+def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     all_data = []
 
     for filename in os.listdir(input_dir):
@@ -133,10 +127,12 @@ def main():
     original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
+
     for url, _ in transformed_urls:
         download_json(url)
 
-    merge_json_files()  # Merge downloaded JSON files
+    merge_json_files()  # Merge downloaded JSON files for the '3.0' subdirectory
+    merge_shuyuan_files()  # Merge downloaded JSON files for the 'shuyuan' subdirectory
 
 if __name__ == "__main__":
     main()
