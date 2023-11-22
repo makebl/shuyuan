@@ -179,13 +179,13 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
                     data = json.load(f)
                     all_data.extend(data)
 
-    # 将文件合并到根目录
-    output_path = os.path.join(root_dir, output_file)
+# 将文件合并到根目录
+for folder_name, data_list in all_data.items():
+    output_path = os.path.join(root_dir, f"{folder_name}.json")
     with open(output_path, 'w') as f:
-        # 使用json.dumps将合并后的数据转换成JSON格式的字符串
-        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
-
+        f.write(json.dumps(data_list, indent=2, ensure_ascii=False))
     print(f"合并的数据保存到 {output_path}")
+
 
 
 
