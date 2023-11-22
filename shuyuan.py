@@ -119,8 +119,9 @@ def download_json(url, output_base_dir=''):
     else:
         print(f"Error getting redirected URL for {url}")
 
-def get_output_folder(url):
-    return "shuyuan_data" if "shuyuan" in url else "shuyuans_data"
+def get_output_filename(url):
+    # 从 URL 中提取文件名
+    return os.path.basename(urllib.parse.urlparse(url).path)
 
 
 def clean_old_files(directory='', root_dir=''):
