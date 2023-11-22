@@ -159,12 +159,14 @@ def main():
         url_data = parse_page(url)
         clean_old_files()  # Clean old files before downloading new ones
         for url, _ in url_data:
-            download_json(url, output_base_dir=url.split('/')[-2])
+            # 根据不同的url选择不同的输出文件夹
+            output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
+            download_json(url, output_base_dir=output_dir)
 
         # 根据不同的url选择不同的输出文件名
         output_file = 'shuyuan.json' if 'shuyuan' in url else 'shuyuans.json'
-        merge_json_files(input_dir='', output_file=output_file)  # Merge downloaded JSON files
 
-if __name__ == "__main__":
-    main()
+        # 使用不同的文件夹调用 merge_json_files
+        merge_json_files(input_dir=output_dir, output_file=output_file)
+
 
