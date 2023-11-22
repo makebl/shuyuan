@@ -42,7 +42,7 @@ def parse_and_transform(url):
                 print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
 
                 # Check if the link is within the specified time range
-                if 1 <= days_ago <= 2:  # Include links from 1 to 3 days ago
+                if 1 <= days_ago <= 10:  # Include links from 1 to 3 days ago
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
