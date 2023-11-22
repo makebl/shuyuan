@@ -146,23 +146,36 @@ def beautify_json_files(directory='', root_dir=''):
     full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
     try:
-        # 美化文件夹中的所有JSON文件
-        for filename in os.listdir(full_path):
-            file_path = os.path.join(full_path, filename)
-            try:
+        # 判断是文件还是目录
+        if os.path.isfile(full_path):
+            beautify_json_file(full_path)
+            print(f"成功美化 JSON 文件: {full_path}")
+        elif os.path.isdir(full_path):
+            # 遍历所有文件夹中的所有 JSON 文件，将其转换为美化格式
+            for filename in os.listdir(full_path):
                 if filename.endswith('.json'):
-                    with open(file_path, 'r') as f:
-                        json_content = json.load(f)
-                    with open(file_path, 'w') as f:
-                        # 设置 indent 参数为 2，表示每一层缩进两个空格
-                        json.dump(json_content, f, indent=2, ensure_ascii=False)
-                    print(f"Beautified JSON file: {file_path}")
-            except Exception as e:
-                print(f"Error beautifying {file_path}: {e}")
+                    file_path = os.path.join(full_path, filename)
+                    beautify_json_file(file_path)
+                    print(f"成功美化 JSON 文件: {file_path}")
 
-        print(f"Successfully beautified JSON files in {full_path}")
+            print(f"成功美化目录中的所有 JSON 文件: {full_path}")
+        else:
+            print(f"无效路径: {full_path}")
     except OSError as e:
-        print(f"Unable to beautify JSON files in {full_path}: {e}")
+        print(f"无法美化 JSON 文件：{full_path}，错误信息：{e}")
+
+def beautify_json_file(file_path):
+    try:
+        with open(file_path, 'r') as f:
+            # 读取 JSON 数据
+            json_data = json.load(f)
+        with open(file_path, 'w') as f:
+            # 将 JSON 数据以美化格式写回文件
+            json.dump(json_data, f, indent=2, ensure_ascii=False)
+        print(f"成功美化文件：{file_path}")
+    except Exception as e:
+        print(f"美化文件时出错：{file_path}，错误信息：{e}")
+
 
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
