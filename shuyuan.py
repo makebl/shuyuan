@@ -120,23 +120,26 @@ def download_json(url, output_base_dir=''):
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
-    full_path = os.path.join(root_dir, directory)  # 使用绝对路径
+    full_path = os.path.abspath(os.path.join(root_dir, directory))  # 使用绝对路径
 
     try:
-        # 删除文件夹中的所有文件
-        for filename in os.listdir(full_path):
-            file_path = os.path.join(full_path, filename)
-            try:
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
-                    print(f"Deleted file: {file_path}")
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-                    print(f"Deleted directory: {file_path}")
-            except Exception as e:
-                print(f"Error deleting {file_path}: {e}")
+        # 如果目录存在，删除文件夹中的所有文件
+        if os.path.exists(full_path):
+            for filename in os.listdir(full_path):
+                file_path = os.path.join(full_path, filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                        print(f"Deleted file: {file_path}")
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                        print(f"Deleted directory: {file_path}")
+                except Exception as e:
+                    print(f"Error deleting {file_path}: {e}")
 
-        print(f"Successfully cleaned old files in {full_path}")
+            print(f"Successfully cleaned old files in {full_path}")
+        else:
+            print(f"Directory does not exist: {full_path}")
     except OSError as e:
         print(f"Unable to clean old files in {full_path}: {e}")
 
