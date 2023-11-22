@@ -134,8 +134,8 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
-    all_data_shuyuan = []
-    all_data_shuyuans = []
+    all_data_shuyuan = []  # 用于保存第一个 URL 的数据
+    all_data_shuyuans = []  # 用于保存第二个 URL 的数据
 
     for url, _ in parse_page(urls[0]):
         # 根据不同的url选择不同的输出文件夹
@@ -160,9 +160,9 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
                 with open(os.path.join(dir_path, filename)) as f:
                     data = json.load(f)
                     if 'shuyuan' in filename:
-                        all_data_shuyuan.append(data)
+                        all_data_shuyuan.append(data)  # 将数据添加到第一个列表中
                     elif 'shuyuans' in filename:
-                        all_data_shuyuans.append(data)
+                        all_data_shuyuans.append(data)  # 将数据添加到第二个列表中
 
     # 将文件合并到根目录
     output_path_shuyuan = os.path.join(root_dir, 'shuyuan.json')
@@ -172,6 +172,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     output_path_shuyuans = os.path.join(root_dir, 'shuyuans.json')
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
+
 
 
 
