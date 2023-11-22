@@ -101,6 +101,7 @@ def download_json(url, output_base_dir=''):
                 output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
                 output_path = os.path.join(output_base_dir, output_dir, filename)
 
+                # 确保目录存在
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
                 with open(output_path, 'w') as f:
@@ -117,6 +118,7 @@ def download_json(url, output_base_dir=''):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 
