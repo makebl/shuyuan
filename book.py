@@ -8,7 +8,8 @@ import re
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'  # 更改了链接
+original_url = url  # 将新的链接赋给 original_url
 
 def parse_page(url):
     session = requests.Session()
@@ -125,7 +126,6 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
     for url, _ in transformed_urls:
@@ -133,4 +133,5 @@ def main():
 
     merge_json_files()  # Merge downloaded JSON files
 
-if __name__ == "__
+if __name__ == "__main__":
+    main()
