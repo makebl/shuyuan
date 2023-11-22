@@ -126,6 +126,10 @@ def clean_old_files(directory=''):
 
 
 def merge_json_files(input_dir='', output_file='merged.json'):
+    # 如果目录不存在，创建它
+    if not os.path.exists(input_dir):
+        os.makedirs(input_dir)
+
     all_data = {}
 
     for filename in os.listdir(input_dir):
@@ -133,6 +137,12 @@ def merge_json_files(input_dir='', output_file='merged.json'):
             with open(os.path.join(input_dir, filename)) as f:
                 data = json.load(f)
                 all_data[filename.split('.')[0]] = data
+
+    output_path = os.path.join(input_dir, output_file)
+    with open(output_path, 'w') as f:
+        # Write JSON content with the outermost square brackets
+        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
     with open(output_file, 'w') as f:
         # Write JSON content with the outermost square brackets
