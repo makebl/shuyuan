@@ -121,11 +121,17 @@ def clean_old_files(directory=''):
         if os.path.isdir(file_path):
             # 如果是文件夹，使用递归删除
             clean_old_files(file_path)
-            os.rmdir(file_path)
-            print(f"删除文件夹: {filename}")
+            try:
+                os.rmdir(file_path)
+                print(f"删除文件夹: {filename}")
+            except OSError as e:
+                print(f"无法删除文件夹 {filename}: {e}")
         elif filename.endswith('.json') and filename != 'me.json':
-            os.remove(file_path)
-            print(f"删除文件: {filename}")
+            try:
+                os.remove(file_path)
+                print(f"删除文件: {filename}")
+            except OSError as e:
+                print(f"无法删除文件 {filename}: {e}")
 
 def merge_json_files(input_dir='', output_file='merged.json'):
     # 如果目录不存在，创建它
@@ -139,9 +145,14 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     all_data = []
 
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
-        for filename in os.listdir(os.path.join(input_dir, dir_name)):
+        dir_path = os.path.join(input_dir, dir_name)
+        if not os.path.exists(dir_path):
+            print(f"文件夹不存在: {dir_path}")
+            continue
+
+        for filename in os.listdir(dir_path):
             if filename.endswith('.json'):
-                with open(os.path.join(input_dir, dir_name, filename)) as f:
+                with open(os.path.join(dir_path, filename)) as f:
                     data = json.load(f)
                     all_data.append(data)
 
@@ -149,6 +160,7 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     output_path = os.path.join(input_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
 def main():
     for url in urls:
