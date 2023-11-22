@@ -15,6 +15,12 @@ urls = [
     'https://www.yckceo.com/yuedu/shuyuans/index.html',
 ]
 
+# 定义不同网址对应的时间范围，单位为天
+time_ranges = {
+    'https://www.yckceo.com/yuedu/shuyuan/index.html': (1, 5),
+    'https://www.yckceo.com/yuedu/shuyuans/index.html': (4),
+}
+
 def parse_page(url):
     response = requests.get(url, verify=True)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -44,14 +50,17 @@ def parse_page(url):
 
                 link_date = today - timedelta(days=days_ago)
 
-                print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
-
-                # Check if the link is within the specified time range
-                if 1 <= days_ago <= 2:  # Include links from 1 to 3 days ago
+                # Check if the link is within the specified time range for the current URL
+                if url in time_ranges and time_ranges[url][0] <= days_ago <= time_ranges[url][1]:
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
     return relevant_links
+
+# 使用示例
+for url in urls:
+    relevant_links = parse_page(url)
+    print(f"Links for {url}: {relevant_links}")
 
 
 def get_redirected_url(url):
