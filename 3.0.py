@@ -10,10 +10,63 @@ import urllib.parse
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def parse_and_transform(url):
-    # ... (保持不变)
+    session = requests.Session()
+    response = session.get(url, verify=False, allow_redirects=True)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    relevant_links = []
+    today = datetime.today().date()
+
+    for div in soup.find_all('div', class_='layui-col-xs12 layui-col-sm6 layui-col-md4'):
+        link = div.find('a', href=True)
+        date_element = div.find('p', class_='m-right')
+
+        if link and date_element:
+            href = link['href']
+            link_date_str = date_element.text.strip()
+
+            match = re.search(r'(\d+)(天前|小时前|分钟前)', link_date_str)
+            if match:
+                value, unit = match.group(1, 2)
+                if unit == '分钟前':
+                    # For minutes, consider them as 1 day
+                    days_ago = 1
+                elif unit == '小时前':
+                    # For hours, consider them as 1 day
+                    days_ago = 1
+                else:
+                    days_ago = int(value)
+
+                link_date = today - timedelta(days=days_ago)
+
+                print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
+
+                # Check if the link is within the specified time range
+                if 1 <= days_ago <= 1:  # Include links from 1 to 4 days ago
+                    json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
+                    relevant_links.append((json_url, link_date))
+
+    return relevant_links
 
 def get_redirected_url(url):
-    # ... (保持不变)
+    session = requests.Session()
+    response = session.get(url, verify=False, allow_redirects=False)
+
+    if response.status_code in (301, 302, 303, 307, 308):
+        final_url = response.headers.get('location')
+        if not final_url.startswith('http'):
+            # If the final URL is relative, make it absolute
+            final_url = urllib.parse.urljoin(url, final_url)
+        return final_url
+    elif response.status_code == 200:
+        # If there was no redirection, return the original URL
+        return url
+    else:
+        print(f"Error getting redirected URL for {url}")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
+        return None
+
 
 def download_json(url, output_root='.'):
     final_url = get_redirected_url(url)
