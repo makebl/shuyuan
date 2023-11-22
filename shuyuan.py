@@ -168,7 +168,7 @@ def main():
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
-    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()
 
