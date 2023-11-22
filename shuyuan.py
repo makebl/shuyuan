@@ -90,6 +90,7 @@ def download_json(url, output_dir='shuyuan'):
     else:
         print(f"Error getting redirected URL for {url}")
 
+
 def clean_old_files(directory='shuyuan'):
     # Create the directory if it doesn't exist
     os.makedirs(directory, exist_ok=True)
