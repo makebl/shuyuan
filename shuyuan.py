@@ -112,19 +112,24 @@ def download_json(url, output_base_dir=''):
     else:
         print(f"Error getting redirected URL for {url}")
 
-
 def clean_old_files(directory='', root_dir=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
     full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
     try:
-        # 递归删除文件夹及其内容
-        shutil.rmtree(full_path)
-        print(f"成功删除文件夹: {full_path}")
-    except OSError as e:
-        print(f"无法删除文件夹 {full_path}: {e}")
+        # 删除文件夹中的所有文件
+        for filename in os.listdir(full_path):
+            file_path = os.path.join(full_path, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
 
+        print(f"Successfully cleaned old files in {full_path}")
+    except OSError as e:
+        print(f"Unable to clean old files in {full_path}: {e}")
 
 def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     # 使用绝对路径
@@ -134,8 +139,8 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     if input_dir and not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
-    all_data_shuyuan = []
-    all_data_shuyuans = []
+    # 使用字典存储不同文件夹的数据
+    all_data = {'shuyuan_data': [], 'shuyuans_data': []}
 
     for url, _ in parse_page(urls[0]):
         # 根据不同的url选择不同的输出文件夹
@@ -152,28 +157,22 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
         dir_path = os.path.join(root_dir, dir_name)
         if not os.path.exists(dir_path):
-            print(f"文件夹不存在: {dir_path}")
+            print(f"Folder does not exist: {dir_path}")
             continue
 
         for filename in os.listdir(dir_path):
             if filename.endswith('.json'):
                 with open(os.path.join(dir_path, filename)) as f:
                     data = json.load(f)
-                    if 'shuyuan' in filename:
-                        all_data_shuyuan.append(data)
-                    elif 'shuyuans' in filename:
-                        all_data_shuyuans.append(data)
+                    all_data[dir_name].append(data)
 
     # 将文件合并到根目录
-    output_path_shuyuan = os.path.join(root_dir, 'shuyuan.json')
-    with open(output_path_shuyuan, 'w') as f:
-        f.write(json.dumps(all_data_shuyuan, indent=2, ensure_ascii=False))
+    for folder_name, data_list in all_data.items():
+        output_path = os.path.join(root_dir, f"{folder_name}.json")
+        with open(output_path, 'w') as f:
+            f.write(json.dumps(data_list, indent=2, ensure_ascii=False))
 
-    output_path_shuyuans = os.path.join(root_dir, 'shuyuans.json')
-    with open(output_path_shuyuans, 'w') as f:
-        f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
-
-
+    print(f"合并的数据保存到 {root_dir}")
 
 def main():
     # 存储根目录
