@@ -1,15 +1,15 @@
-import os
 import requests
 from bs4 import BeautifulSoup
 import json
-import re
+import os
 from datetime import datetime, timedelta
-import urllib3
-import urllib.parse
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import re
 
-# 获取环境变量中的基础URL
-base_url = os.getenv('BASE_URL')
+urls = [
+    'https://www.yckceo.com/yuedu/shuyuan/index.html',
+    # Add your second URL here
+    'https://www.yckceo.com/yuedu/shuyuans/index.html',
+]
 
 def parse_page(url):
     response = requests.get(url, verify=False)
@@ -44,12 +44,18 @@ def parse_page(url):
 
                 # Check if the link is within the specified time range
                 if 1 <= days_ago <= 4:  # Include links from 1 to 3 days ago
-                    json_url = f'https://www.yckceo.com{href.replace("shuyuans", "shuyuan").replace("content", "json")}'
+                    json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
     return relevant_links
 
-def download_json(url, output_dir='shuyuan'):
+def get_redirected_url(url):
+    session = requests.Session()
+    response = session.get(url, verify=False, allow_redirects=False)
+    final_url = next(session.resolve_redirects(response, response.request), None)
+    return final_url.url if final_url else None
+
+def download_json(url, output_dir='3.0'):
     final_url = get_redirected_url(url)
     
     if final_url:
@@ -64,7 +70,7 @@ def download_json(url, output_dir='shuyuan'):
                 id = final_url.split('/')[-1].split('.')[0]
 
                 link_date = None
-                for _, date in parse_page(final_url):
+                for _, date in parse_page(url):
                     if _ == url:
                         link_date = date
                         break
@@ -72,8 +78,9 @@ def download_json(url, output_dir='shuyuan'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
-                os.makedirs(output_dir, exist_ok=True)
                 output_path = os.path.join(output_dir, f'{id}.json')
+
+                os.makedirs(output_dir, exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
@@ -87,16 +94,16 @@ def download_json(url, output_dir='shuyuan'):
     else:
         print(f"Error getting redirected URL for {url}")
 
-def clean_old_files(directory='shuyuan'):
-    # Create the directory if it doesn't exist
+def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
 
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        os.remove(file_path)
-        print(f"Deleted file: {filename}")
+        if filename.endswith('.json') and filename != 'me.json':
+            os.remove(file_path)
+            print(f"Deleted old file: {filename}")
 
-def merge_json_files(input_dir='shuyuan', output_file='shuyuan.json'):
+def merge_json_files(input_dir='3.0', output_file='merged.json'):
     all_data = []
 
     for filename in os.listdir(input_dir):
@@ -106,14 +113,14 @@ def merge_json_files(input_dir='shuyuan', output_file='shuyuan.json'):
                 all_data.extend(data)
 
     with open(output_file, 'w') as f:
-        # Write JSON content with the outermost square brackets
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 def main():
-    urls = parse_page(base_url)
-    clean_old_files()  # Clean old files before downloading new ones
-    for url, _ in urls:
-        download_json(url)
+    for url in urls:
+        url_data = parse_page(url)
+        clean_old_files()  # Clean old files before downloading new ones
+        for url, _ in url_data:
+            download_json(url)
 
     merge_json_files()  # Merge downloaded JSON files
 
