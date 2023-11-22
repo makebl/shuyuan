@@ -74,9 +74,8 @@ def download_json(url, output_dir='shuyuan'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
-                output_path = os.path.join(output_dir, f'{id}.json')
-
                 os.makedirs(output_dir, exist_ok=True)
+                output_path = os.path.join(output_dir, f'{id}.json')
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
