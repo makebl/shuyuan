@@ -68,6 +68,7 @@ def get_redirected_url(url):
         return None
 
 def download_json(url, output_dir='3.0'):
+    print(f"Processing URL: {url}")
     final_url = get_redirected_url(url)
 
     if final_url:
