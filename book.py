@@ -96,8 +96,8 @@ def download_json(url, output_dir='3.0'):
 
                 os.makedirs(output_dir, exist_ok=True)
 
-                with open(output_path, 'w') as f:
-                    json.dump(json_content, f, indent=2, ensure_ascii=False)
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    f.write(json.dumps(json_content, indent=2, ensure_ascii=False))
                 print(f"Downloaded {id}.json to {output_dir}")
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON for {final_url}: {e}")
