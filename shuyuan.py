@@ -188,6 +188,9 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     clean_old_files(directory='shuyuan_data', root_dir=root_dir)
     clean_old_files(directory='shuyuans_data', root_dir=root_dir)
 
+    # 存储所有 JSON 数据的列表
+    all_json_data = []
+
     # 遍历所有文件夹，将每个 JSON 文件转换为美化格式
     for url, _ in parse_page(urls[0]):
         # 根据不同的 url 选择不同的输出文件夹
@@ -196,39 +199,25 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
         beautify_json_files(output_dir, root_dir)  # 添加此行以确保每个链接下载后都美化 JSON 文件
         print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
 
-    for url, _ in parse_page(urls[1]):  # 添加对第二个 URL 的处理
-        # 根据不同的 url 选择不同的输出文件夹
-        output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
-        download_json(url, output_base_dir=root_dir)  # 使用 root_dir，确保使用正确的根目录
-        beautify_json_files(output_dir, root_dir)  # 添加此行以确保每个链接下载后都美化 JSON 文件
-        print(f"Processed URL: {url}")  # 添加此行以确保每个链接都被处理
-
-    # ...
-
-def beautify_json_files(directory='', root_dir=''):
-    # 如果没有传递目录参数，使用当前工作目录
-    directory = directory or os.getcwd()
-    full_path = os.path.join(root_dir, directory)  # 使用绝对路径
-
-    try:
-        # 遍历所有文件夹中的所有 JSON 文件，将其转换为美化格式
-        for filename in os.listdir(full_path):
+        # 读取 JSON 数据并添加到列表中
+        for filename in os.listdir(os.path.join(root_dir, output_dir)):
             if filename.endswith('.json'):
-                file_path = os.path.join(full_path, filename)
+                file_path = os.path.join(root_dir, output_dir, filename)
                 try:
                     with open(file_path, 'r') as f:
-                        # 读取 JSON 数据
                         json_data = json.load(f)
-                    with open(file_path, 'w') as f:
-                        # 将 JSON 数据以美化格式写回文件
-                        json.dump(json_data, f, indent=2, ensure_ascii=False)
-                    print(f"Beautified file: {file_path}")
+                        all_json_data.append(json_data)
                 except Exception as e:
-                    print(f"Error beautifying {file_path}: {e}")
+                    print(f"Error reading {file_path}: {e}")
 
-        print(f"Successfully beautified JSON files in {full_path}")
-    except OSError as e:
-        print(f"Unable to beautify JSON files in {full_path}: {e}")
+    # 将所有 JSON 数据合并并写入输出文件
+    output_file_path = os.path.join(root_dir, output_file)
+    with open(output_file_path, 'w') as f:
+        json.dump(all_json_data, f, indent=2, ensure_ascii=False)
+    print(f"Merged JSON data written to {output_file_path}")
+
+    # 美化合并后的 JSON 文件
+    beautify_json_files(output_file, root_dir)
 
 
 def main():
