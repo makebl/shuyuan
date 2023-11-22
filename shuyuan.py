@@ -118,20 +118,17 @@ def clean_old_files(directory=''):
     # 删除文件和文件夹
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if os.path.isdir(file_path):
-            # 如果是文件夹，使用递归删除
-            clean_old_files(file_path)
-            try:
+        try:
+            if os.path.isdir(file_path):
+                # 如果是文件夹，使用递归删除
+                clean_old_files(file_path)
                 os.rmdir(file_path)
                 print(f"删除文件夹: {filename}")
-            except OSError as e:
-                print(f"无法删除文件夹 {filename}: {e}")
-        elif filename.endswith('.json') and filename != 'me.json':
-            try:
+            elif filename.endswith('.json') and filename != 'me.json':
                 os.remove(file_path)
                 print(f"删除文件: {filename}")
-            except OSError as e:
-                print(f"无法删除文件 {filename}: {e}")
+        except OSError as e:
+            print(f"无法删除 {filename}: {e}")
 
     # 尝试删除传递的文件夹
     try:
@@ -167,6 +164,7 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     output_path = os.path.join(input_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
 
 
