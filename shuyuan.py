@@ -115,11 +115,15 @@ def clean_old_files(directory=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
 
+    # 确保目录存在，如果不存在就创建它
+    os.makedirs(directory, exist_ok=True)
+
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         if filename.endswith('.json') and filename != 'me.json':
             os.remove(file_path)
             print(f"删除旧文件: {filename}")
+
 
 
 def merge_json_files(input_dir='', output_file='merged.json'):
