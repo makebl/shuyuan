@@ -138,6 +138,10 @@ def merge_json_files(input_dir='', output_file='merged.json'):
 
     all_data = []
 
+    # 确保新文件夹存在
+    os.makedirs(os.path.join(input_dir, 'shuyuan_data'), exist_ok=True)
+    os.makedirs(os.path.join(input_dir, 'shuyuans_data'), exist_ok=True)
+
     for dir_name in ['shuyuan_data', 'shuyuans_data']:
         dir_path = os.path.join(input_dir, dir_name)
         if not os.path.exists(dir_path):
@@ -154,6 +158,7 @@ def merge_json_files(input_dir='', output_file='merged.json'):
     output_path = os.path.join(input_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
+
 
 
 def main():
