@@ -163,7 +163,7 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     
     # 清理旧文件以便下载新文件
@@ -182,6 +182,7 @@ if __name__ == "__main__":
     os.makedirs('3.0', exist_ok=True)  # 移动到这里
     os.makedirs('shuyuan', exist_ok=True)  # 移动到这里
     main()
+
 
 
 
