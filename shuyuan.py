@@ -77,7 +77,7 @@ def download_json(url, output_base_dir=''):
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # Download the JSON content from the final URL
+        # 下载 JSON 内容
         response = requests.get(final_url)
         
         if response.status_code == 200:
@@ -85,23 +85,18 @@ def download_json(url, output_base_dir=''):
                 json_content = response.json()
                 id = final_url.split('/')[-1].split('.')[0]
 
-                # Hardcode the filename based on the URL
-                if 'shuyuans' in final_url:
-                    filename = f'shuyuans_{id}.json'
-                elif 'shuyuan' in final_url:
-                    filename = f'shuyuan_{id}.json'
-                else:
-                    # Handle other cases or raise an error as needed
-                    print(f"Unsupported URL: {final_url}")
-                    return
+                # 获取文件名
+                filename = os.path.basename(urllib.parse.urlparse(final_url).path)
 
-                output_path = os.path.join(output_base_dir, filename)
+                # 根据链接中的关键词选择文件夹
+                output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
+                output_path = os.path.join(output_dir, filename)
                 
-                os.makedirs(output_base_dir, exist_ok=True)
+                os.makedirs(output_dir, exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
-                print(f"Downloaded {filename} to {output_base_dir}")
+                print(f"Downloaded {filename} to {output_dir}")
 
                 # Now you can use the original URL for further processing
                 print(f"Download URL: {url}")
@@ -113,6 +108,7 @@ def download_json(url, output_base_dir=''):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 def clean_old_files(directory=''):
     # 如果没有传递目录参数，使用当前工作目录
