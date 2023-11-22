@@ -155,7 +155,11 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 
 
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
+    # 在 main 函数开始处添加以下代码
+    os.makedirs('3.0', exist_ok=True)
+    os.makedirs('shuyuan', exist_ok=True)
+
+    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # 清理旧文件以便下载新文件
 
@@ -170,3 +174,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
