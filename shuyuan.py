@@ -75,9 +75,9 @@ def download_json(url, output_dir='3.0'):
 
         # Check if the output directory exists, if not, create it
         if 'shuyuan' in url:
-            output_dir = 'shuyuan'
-        elif 'shuyuans' in url:
             output_dir = '3.0'
+        elif 'shuyuans' in url:
+            output_dir = 'shuyuan'
         os.makedirs(output_dir, exist_ok=True)
 
         # Download the JSON content from the final URL
@@ -112,6 +112,8 @@ def download_json(url, output_dir='3.0'):
     else:
         print(f"Error getting redirected URL for {url}")
 
+
+
 def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
 
@@ -138,6 +140,9 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
 def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     all_data = []
 
+    # Check if the input directory exists, if not, create it
+    os.makedirs(input_dir, exist_ok=True)
+
     for filename in os.listdir(input_dir):
         if filename.endswith('.json'):
             with open(os.path.join(input_dir, filename), 'r') as f:
@@ -149,8 +154,9 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
+
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
 
@@ -158,7 +164,10 @@ def main():
         download_json(url)
 
     merge_json_files()  # Merge downloaded JSON files for the '3.0' subdirectory
-    merge_shuyuan_files()  # Merge downloaded JSON files for the 'shuyuan' subdirectory
+
+    # Only call merge_shuyuan_files if the 'shuyuan' directory is present
+    if 'shuyuan' in os.listdir():
+        merge_shuyuan_files()  # Merge downloaded JSON files for the 'shuyuan' subdirectory
 
 if __name__ == "__main__":
     main()
