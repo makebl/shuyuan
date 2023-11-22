@@ -76,12 +76,12 @@ def download_json(url, output_root='.'):
 
         # 根据链接是否包含 'shuyuan' 或 'shuyuans' 设置子目录名称
         if 'shuyuan' in final_url:
-            subdirectory = 'shuyuan'
+            subdirectory = 'shuyuans'
         elif 'shuyuans' in final_url:
-            subdirectory = '3.0'
+            subdirectory = 'shuyuans'
         else:
-            # 如果既不包含 'shuyuan' 也不包含 'shuyuans'，默认为 '3.0'
-            subdirectory = '3.0'
+            # 如果既不包含 'shuyuan' 也不包含 'shuyuans'，默认为 'shuyuans'
+            subdirectory = 'shuyuans'
 
         # 设置输出目录为根目录
         output_dir = os.path.join(output_root, subdirectory)
@@ -122,7 +122,7 @@ def download_json(url, output_root='.'):
     else:
         print(f"Error getting redirected URL for {url}")
 
-def clean_old_files(directory='3.0'):
+def clean_old_files(directory='shuyuans'):
     os.makedirs(directory, exist_ok=True)
 
     for filename in os.listdir(directory):
@@ -132,7 +132,7 @@ def clean_old_files(directory='3.0'):
             print(f"Deleted old file: {filename}")
 
 
-def merge_json_files(input_dir='3.0', output_file='merged.json'):
+def merge_json_files(input_dir='shuyuans', output_file='merged.json'):
     all_data = []
 
     for filename in os.listdir(input_dir):
@@ -146,10 +146,10 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
 
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
-def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
+def merge_shuyuan_files(input_dir='shuyuans', output_file='shuyuans.json'):
     all_data = []
 
-    os.makedirs('3.0', exist_ok=True)
+    os.makedirs('shuyuans', exist_ok=True)
 
     for filename in os.listdir(input_dir):
         if filename.endswith('.json'):
@@ -164,8 +164,7 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 
 def main():
     # 在 main 函数开始处添加以下代码
-    os.makedirs('3.0', exist_ok=True)
-    os.makedirs('shuyuan', exist_ok=True)
+    os.makedirs('shuyuans', exist_ok=True)
 
     original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
     transformed_urls = parse_and_transform(original_url)
@@ -176,16 +175,8 @@ def main():
     for url, _ in transformed_urls:
         download_json(url)
 
-    merge_json_files()  # 合并 '3.0' 子目录中下载的 JSON 文件
-
-    # 仅在 'shuyuan' 目录存在时调用 merge_shuyuan_files
-    if 'shuyuan' in os.listdir():
-        merge_shuyuan_files()  # 合并 'shuyuan' 子目录中下载的 JSON 文件
+    merge_json_files()  # 合并 'shuyuans' 子目录中下载的 JSON 文件
 
 if __name__ == "__main__":
-    os.makedirs('3.0', exist_ok=True)  # 移动到这里
-    os.makedirs('shuyuan', exist_ok=True)  # 移动到这里
+    os.makedirs('shuyuans', exist_ok=True)  # 移动到这里
     main()
-
-
-
