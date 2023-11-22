@@ -7,8 +7,8 @@ import re
 
 base_url = os.getenv('BASE_URL')
 
-def parse_page():
-    response = requests.get(url, verify=False)
+def parse_page(base_url):
+    response = requests.get(base_url, verify=False)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     relevant_links = []
@@ -136,3 +136,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
