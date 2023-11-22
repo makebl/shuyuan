@@ -152,8 +152,8 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     clean_old_files(directory='shuyuan_data', root_dir=root_dir)
     clean_old_files(directory='shuyuans_data', root_dir=root_dir)
 
-    # 使用字典存储不同文件夹的数据
-    all_data = {'shuyuan_data': [], 'shuyuans_data': []}
+    # 使用列表存储合并的数据
+    all_data = []
 
     for url, _ in parse_page(urls[0]):
         # 根据不同的 url 选择不同的输出文件夹
@@ -177,15 +177,16 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
             if filename.endswith('.json'):
                 with open(os.path.join(dir_path, filename)) as f:
                     data = json.load(f)
-                    all_data[dir_name].append(data)
+                    all_data.extend(data)
 
     # 将文件合并到根目录
-    for folder_name, data_list in all_data.items():
-        output_path = os.path.join(root_dir, f"{folder_name}.json")
-        with open(output_path, 'w') as f:
-            f.write(json.dumps(data_list, indent=2, ensure_ascii=False))
+    output_path = os.path.join(root_dir, output_file)
+    with open(output_path, 'w') as f:
+        # 使用json.dumps将合并后的数据转换成JSON格式的字符串
+        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
-    print(f"合并的数据保存到 {root_dir}")
+    print(f"合并的数据保存到 {output_path}")
+
 
 
 
