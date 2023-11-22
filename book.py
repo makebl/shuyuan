@@ -10,6 +10,7 @@ import re
 url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
 
 def parse_page():
+    session = requests.Session()
     response = session.get(url, verify=False, allow_redirects=True)
     soup = BeautifulSoup(response.text, 'html.parser')
 
