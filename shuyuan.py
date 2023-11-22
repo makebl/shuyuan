@@ -170,12 +170,11 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
                     all_data[dir_name].append(data)
 
     # 将文件合并到根目录
-    for folder_name, data_list in all_data.items():
-        output_path = os.path.join(root_dir, f"{folder_name}.json")
-        with open(output_path, 'w') as f:
-            f.write(json.dumps(data_list, indent=2, ensure_ascii=False))
+    output_path = os.path.join(root_dir, f"{output_file}.json")
+    with open(output_path, 'w') as f:
+        json.dump(all_data, f, indent=2, ensure_ascii=False)
 
-    print(f"合并的数据保存到 {root_dir}")
+    print(f"合并的数据保存到 {output_path}")
 
 def main():
     # 存储根目录
