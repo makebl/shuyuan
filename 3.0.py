@@ -68,16 +68,15 @@ def get_redirected_url(url):
         return None
 
 def download_json(url, output_dir='3.0'):
-    print(f"Processing URL: {url}")
     final_url = get_redirected_url(url)
 
     if final_url:
         print(f"Real URL: {final_url}")
 
         # Check if the output directory exists, if not, create it
-        if 'shuyuan' in url and url.endswith('/shuyuan'):
+        if 'shuyuan' in url:
             output_dir = 'shuyuan'
-        elif 'shuyuans' in url and url.endswith('/shuyuans'):
+        elif 'shuyuans' in url:
             output_dir = '3.0'
         os.makedirs(output_dir, exist_ok=True)
 
@@ -112,6 +111,7 @@ def download_json(url, output_dir='3.0'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 def clean_old_files(directory='3.0'):
     os.makedirs(directory, exist_ok=True)
