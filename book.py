@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import os
 from datetime import datetime, timedelta
 import re
