@@ -74,44 +74,47 @@ def get_redirected_url(url):
         return None
 
 
-# 修改 download_json 函数
 def download_json(url, output_base_dir=''):
     final_url = get_redirected_url(url)
 
     if final_url:
         print(f"Real URL: {final_url}")
 
-        # 下载 JSON 内容
-        response = requests.get(final_url, verify=True)  # 添加 verify=True 进行 SSL 验证
+        if final_url.endswith('.json'):
+            # 下载 JSON 内容
+            response = requests.get(final_url, verify=True)  # 添加 verify=True 进行 SSL 验证
 
-        if response.status_code == 200:
-            try:
-                json_content = response.json()
-                id = final_url.split('/')[-1].split('.')[0]
+            if response.status_code == 200:
+                try:
+                    json_content = response.json()
+                    id = final_url.split('/')[-1].split('.')[0]
 
-                # 获取文件名
-                filename = os.path.basename(urllib.parse.urlparse(final_url).path)
+                    # 获取文件名
+                    filename = os.path.basename(urllib.parse.urlparse(final_url).path)
 
-                # 根据链接中的关键词选择文件夹
-                output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
-                output_path = os.path.join(output_base_dir, output_dir, filename)
+                    # 根据链接中的关键词选择文件夹
+                    output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
+                    output_path = os.path.join(output_base_dir, output_dir, filename)
 
-                os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
+                    os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
-                with open(output_path, 'wb') as f:  # 保存为二进制文件
-                    f.write(response.content)
-                print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
+                    with open(output_path, 'wb') as f:  # 保存为二进制文件
+                        f.write(response.content)
+                    print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
-                # Now you can use the original URL for further processing
-                print(f"Download URL: {url}")
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON for {final_url}: {e}")
+                    # Now you can use the original URL for further processing
+                    print(f"Download URL: {url}")
+                except json.JSONDecodeError as e:
+                    print(f"Error decoding JSON for {final_url}: {e}")
+                    print(f"Response Content: {response.text}")
+            else:
+                print(f"Error downloading {final_url}: Status code {response.status_code}")
                 print(f"Response Content: {response.text}")
         else:
-            print(f"Error downloading {final_url}: Status code {response.status_code}")
-            print(f"Response Content: {response.text}")
+            print(f"Skipping non-JSON URL: {final_url}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 def clean_old_files(directory='', root_dir=''):
