@@ -119,6 +119,8 @@ def clean_old_files(directory=''):
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         if os.path.isdir(file_path):
+            # 如果是文件夹，使用递归删除
+            clean_old_files(file_path)
             os.rmdir(file_path)
             print(f"删除文件夹: {filename}")
         elif filename.endswith('.json') and filename != 'me.json':
