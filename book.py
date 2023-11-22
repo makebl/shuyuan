@@ -5,7 +5,7 @@ import os
 from datetime import datetime, timedelta
 import re
 
-url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
+url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
 
 def parse_page():
     response = requests.get(url, verify=False)
