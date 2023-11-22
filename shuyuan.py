@@ -119,6 +119,7 @@ def download_json(url, output_base_dir=''):
 def clean_old_files(directory=''):
     # 如果没有传递目录参数，使用当前工作目录
     directory = directory or os.getcwd()
+    directory = os.path.join(root_dir, directory)  # 使用绝对路径
 
     try:
         # 递归删除文件夹及其内容
@@ -126,6 +127,7 @@ def clean_old_files(directory=''):
         print(f"成功删除文件夹: {directory}")
     except OSError as e:
         print(f"无法删除文件夹 {directory}: {e}")
+
 
 
 
