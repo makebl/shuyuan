@@ -82,7 +82,7 @@ def download_json(url, output_base_dir=''):
 
         # 下载 JSON 内容
         json_url = final_url.replace('.html', '.json')  # 将.html替换为.json
-        response = requests.get(json_url, verify=True)  # 使用正确的JSON URL进行请求
+        response = requests.get(json_url, verify=True)  # 使用正确的 JSON URL 进行请求
 
         if response.status_code == 200:
             try:
@@ -99,6 +99,7 @@ def download_json(url, output_base_dir=''):
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
                 with open(output_path, 'w') as f:
+                    # 设置 indent 参数为 2，表示每一层缩进两个空格
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
                 print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
