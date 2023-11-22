@@ -11,7 +11,7 @@ urls = [
 ]
 
 def parse_page(url):
-    response = requests.get(url, verify=False)
+    response = requests.get(url, verify=True)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     relevant_links = []
@@ -50,7 +50,7 @@ def parse_page(url):
 
 def get_redirected_url(url):
     session = requests.Session()
-    response = session.get(url, verify=False, allow_redirects=False)
+    response = session.get(url, verify=True, allow_redirects=True)
     final_url = next(session.resolve_redirects(response, response.request), None)
     return final_url.url if final_url else None
 
