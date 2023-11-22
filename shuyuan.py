@@ -119,7 +119,8 @@ def download_json(url, output_base_dir=''):
     else:
         print(f"Error getting redirected URL for {url}")
 
-
+def get_output_folder(url):
+    return "shuyuan_data" if "shuyuan" in url else "shuyuans_data"
 
 
 def clean_old_files(directory='', root_dir=''):
