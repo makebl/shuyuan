@@ -140,6 +140,9 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
 def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
     all_data = []
 
+    # Check if the input directory exists, if not, create it
+    os.makedirs(input_dir, exist_ok=True)
+
     for filename in os.listdir(input_dir):
         if filename.endswith('.json'):
             with open(os.path.join(input_dir, filename), 'r') as f:
@@ -150,6 +153,7 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
         json.dump(all_data, f, indent=2, ensure_ascii=False)
 
     print(f"Successfully merged {len(all_data)} book sources to {output_file}")
+
 
 def main():
     original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
