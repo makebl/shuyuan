@@ -5,7 +5,7 @@ import os
 from datetime import datetime, timedelta
 import re
 
-url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+base_url = os.getenv('BASE_URL')
 
 def parse_page():
     response = requests.get(url, verify=False)
@@ -127,12 +127,12 @@ def merge_json_files(input_dir='shuyuan', output_file='shuyuan.json'):
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
 def main():
-    urls = parse_page()
-    clean_old_files()  # Clean old files before downloading new ones
+    urls = parse_page(base_url)
+    clean_old_files()
     for url, _ in urls:
         download_json(url)
 
-    merge_json_files()  # Merge downloaded JSON files
+    merge_json_files()
 
 if __name__ == "__main__":
     main()
