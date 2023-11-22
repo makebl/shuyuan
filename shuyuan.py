@@ -97,7 +97,7 @@ def download_json(url, output_base_dir=''):
 
                 output_path = os.path.join(output_base_dir, filename)
                 
-                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                os.makedirs(output_base_dir, exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
@@ -143,17 +143,6 @@ def merge_json_files(input_dir='', output_file='merged.json'):
         # Write JSON content with the outermost square brackets
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
-
-    output_path = os.path.join(input_dir, output_file)
-    with open(output_path, 'w') as f:
-        # Write JSON content with the outermost square brackets
-        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
-
-
-    with open(output_file, 'w') as f:
-        # Write JSON content with the outermost square brackets
-        f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
-
 def main():
     for url in urls:
         url_data = parse_page(url)
@@ -169,4 +158,5 @@ def main():
         # 使用不同的文件夹调用 merge_json_files
         merge_json_files(input_dir=output_dir, output_file=output_file)
 
-
+if __name__ == "__main__":
+    main()
