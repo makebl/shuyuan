@@ -159,7 +159,7 @@ def main():
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # 清理旧文件以便下载新文件
 
@@ -174,4 +174,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
