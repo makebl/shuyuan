@@ -127,7 +127,7 @@ def clean_old_files(directory='3.0'):
 
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if filename.endswith('.json') and filename != 'me.json':
+        if filename.endswith('.json'):
             os.remove(file_path)
             print(f"Deleted old file: {filename}")
 
@@ -166,7 +166,7 @@ def main():
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # 清理旧文件以便下载新文件
 
