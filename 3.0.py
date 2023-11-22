@@ -131,6 +131,7 @@ def clean_old_files(directory='3.0'):
             os.remove(file_path)
             print(f"Deleted old file: {filename}")
 
+
 def merge_json_files(input_dir='3.0', output_file='merged.json'):
     all_data = []
 
