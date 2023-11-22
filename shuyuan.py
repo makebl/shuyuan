@@ -151,8 +151,7 @@ def main():
         for url, _ in url_data:
             # 根据不同的url选择不同的输出文件夹
             output_dir = 'shuyuan_data' if 'shuyuan' in url else 'shuyuans_data'
-            download_json(url, output_base_dir=output_dir)
-
+            download_json(url, output_base_dir=os.getcwd())  # 修改这里，确保使用正确的根目录
         # 根据不同的url选择不同的输出文件名
         output_file = 'shuyuan.json' if 'shuyuan' in url else 'shuyuans.json'
 
