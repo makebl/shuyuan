@@ -97,7 +97,7 @@ def download_json(url, output_base_dir=''):
 
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
-                with open(output_path, 'w') as f:
+                with open(output_path, 'w', encoding='utf-8') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
                 print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
