@@ -42,7 +42,7 @@ def parse_and_transform(url):
                 print(f"Link: {href}, Date String: {link_date_str}, Calculated Date: {link_date}")
 
                 # Check if the link is within the specified time range
-                if 1 <= days_ago <= 10:  # Include links from 1 to 3 days ago
+                if 1 <= days_ago <= 7:  # Include links from 1 to 3 days ago
                     json_url = f'https://www.yckceo.com{href.replace("content", "json")}'
                     relevant_links.append((json_url, link_date))
 
@@ -76,6 +76,8 @@ def download_json(url, output_dir='3.0'):
         # Check if the output directory exists, if not, create it
         if 'shuyuan' in url:
             output_dir = 'shuyuan'
+        elif 'shuyuans' in url:
+            output_dir = '3.0'
         os.makedirs(output_dir, exist_ok=True)
 
         # Download the JSON content from the final URL
@@ -109,43 +111,6 @@ def download_json(url, output_dir='3.0'):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
-
-def clean_old_files(directory='3.0'):
-    os.makedirs(directory, exist_ok=True)
-
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        if filename.endswith('.json') and filename != 'me.json':
-            os.remove(file_path)
-            print(f"Deleted old file: {filename}")
-
-def merge_json_files(input_dir='3.0', output_file='merged.json'):
-    all_data = []
-
-    for filename in os.listdir(input_dir):
-        if filename.endswith('.json'):
-            with open(os.path.join(input_dir, filename), 'r') as f:
-                data = json.load(f)
-                all_data.extend(data)
-
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(all_data, f, indent=2, ensure_ascii=False)
-
-    print(f"Successfully merged {len(all_data)} book sources to {output_file}")
-
-def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
-    all_data = []
-
-    for filename in os.listdir(input_dir):
-        if filename.endswith('.json'):
-            with open(os.path.join(input_dir, filename), 'r') as f:
-                data = json.load(f)
-                all_data.extend(data)
-
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(all_data, f, indent=2, ensure_ascii=False)
-
-    print(f"Successfully merged {len(all_data)} book sources to {output_file}")
 
 def main():
     original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
