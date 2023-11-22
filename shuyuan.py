@@ -119,14 +119,20 @@ def clean_old_files(directory='', root_dir=''):
     directory = directory or os.getcwd()
     full_path = os.path.join(root_dir, directory)  # 使用绝对路径
 
- for filename in os.listdir(full_path):
-    file_path = os.path.join(full_path, filename)
     try:
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-            print(f"Successfully deleted: {file_path}")
-    except Exception as e:
-        print(f"Error deleting {file_path}: {e}")
+        # 删除文件夹中的所有文件
+        for filename in os.listdir(full_path):
+            file_path = os.path.join(full_path, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+
+        print(f"Successfully cleaned old files in {full_path}")
+    except OSError as e:
+        print(f"Unable to clean old files in {full_path}: {e}")
+
 
 
 
