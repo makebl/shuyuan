@@ -133,7 +133,7 @@ def merge_json_files(input_dir='3.0', output_file='merged.json'):
 
 
 def main():
-    original_url = 'https://www.yckceo.com/yuedu/shuyuan/index.html'
+    original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
     clean_old_files()  # Clean old files before downloading new ones
     for url, _ in transformed_urls:
