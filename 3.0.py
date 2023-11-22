@@ -164,7 +164,11 @@ def main():
         download_json(url)
 
     merge_json_files()  # Merge downloaded JSON files for the '3.0' subdirectory
-    merge_shuyuan_files()  # Merge downloaded JSON files for the 'shuyuan' subdirectory
+
+    # Only call merge_shuyuan_files if the 'shuyuan' directory is present
+    if 'shuyuan' in os.listdir():
+        merge_shuyuan_files()  # Merge downloaded JSON files for the 'shuyuan' subdirectory
 
 if __name__ == "__main__":
     main()
+
