@@ -163,21 +163,22 @@ def merge_shuyuan_files(input_dir='shuyuan', output_file='shuyuan.json'):
 
 def main():
     # 在 main 函数开始处添加以下代码
-    print("Current working directory:", os.getcwd())
     os.makedirs('3.0', exist_ok=True)
     os.makedirs('shuyuan', exist_ok=True)
 
     original_url = 'https://www.yckceo.com/yuedu/shuyuans/index.html'
     transformed_urls = parse_and_transform(original_url)
-    clean_old_files()
+    clean_old_files()  # 清理旧文件以便下载新文件
 
     for url, _ in transformed_urls:
         download_json(url)
 
-    merge_json_files()
+    merge_json_files()  # 合并 '3.0' 子目录中下载的 JSON 文件
 
+    # 仅在 'shuyuan' 目录存在时调用 merge_shuyuan_files
     if 'shuyuan' in os.listdir():
-        merge_shuyuan_files()
+        merge_shuyuan_files()  # 合并 'shuyuan' 子目录中下载的 JSON 文件
 
 if __name__ == "__main__":
     main()
+
