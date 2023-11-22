@@ -76,13 +76,13 @@ def get_redirected_url(url):
 
 def download_json(url, output_base_dir=''):
     final_url = get_redirected_url(url)
-    
+
     if final_url:
         print(f"Real URL: {final_url}")
 
         # 下载 JSON 内容
-        response = requests.get(final_url)
-        
+        response = requests.get(final_url, verify=True)  # 添加 verify=True 进行 SSL 验证
+
         if response.status_code == 200:
             try:
                 json_content = response.json()
@@ -94,7 +94,7 @@ def download_json(url, output_base_dir=''):
                 # 根据链接中的关键词选择文件夹
                 output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
                 output_path = os.path.join(output_base_dir, output_dir, filename)
-                
+
                 os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
                 with open(output_path, 'w') as f:
@@ -111,6 +111,7 @@ def download_json(url, output_base_dir=''):
             print(f"Response Content: {response.text}")
     else:
         print(f"Error getting redirected URL for {url}")
+
 
 
 
