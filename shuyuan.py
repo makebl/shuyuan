@@ -90,13 +90,13 @@ def download_json(url, output_base_dir=''):
 
                 # 根据链接中的关键词选择文件夹
                 output_dir = 'shuyuan_data' if 'shuyuan' in final_url else 'shuyuans_data'
-                output_path = os.path.join(output_dir, filename)
+                output_path = os.path.join(output_base_dir, output_dir, filename)
                 
-                os.makedirs(output_dir, exist_ok=True)
+                os.makedirs(os.path.join(output_base_dir, output_dir), exist_ok=True)
 
                 with open(output_path, 'w') as f:
                     json.dump(json_content, f, indent=2, ensure_ascii=False)
-                print(f"Downloaded {filename} to {output_dir}")
+                print(f"Downloaded {filename} to {output_base_dir}/{output_dir}")
 
                 # Now you can use the original URL for further processing
                 print(f"Download URL: {url}")
@@ -127,18 +127,25 @@ def merge_json_files(input_dir='', output_file='merged.json'):
         os.makedirs(input_dir)
 
     # 删除旧文件
-    clean_old_files()
+    clean_old_files(os.path.join(input_dir, 'shuyuan_data'))
+    clean_old_files(os.path.join(input_dir, 'shuyuans_data'))
 
     all_data = {}
 
-    for filename in os.listdir(input_dir):
+    for filename in os.listdir(os.path.join(input_dir, 'shuyuan_data')):
         if filename.endswith('.json'):
-            with open(os.path.join(input_dir, filename)) as f:
+            with open(os.path.join(input_dir, 'shuyuan_data', filename)) as f:
+                data = json.load(f)
+                all_data[filename.split('.')[0]] = data
+
+    for filename in os.listdir(os.path.join(input_dir, 'shuyuans_data')):
+        if filename.endswith('.json'):
+            with open(os.path.join(input_dir, 'shuyuans_data', filename)) as f:
                 data = json.load(f)
                 all_data[filename.split('.')[0]] = data
 
     # 将文件合并到根目录
-    output_path = os.path.join(output_file)
+    output_path = os.path.join(input_dir, output_file)
     with open(output_path, 'w') as f:
         f.write(json.dumps(all_data, indent=2, ensure_ascii=False))
 
@@ -154,7 +161,7 @@ def main():
         output_file = 'shuyuan.json' if 'shuyuan' in url else 'shuyuans.json'
 
         # 使用不同的文件夹调用 merge_json_files
-        merge_json_files(input_dir=output_dir, output_file=output_file)
+        merge_json_files(input_dir=os.getcwd(), output_file=output_file)
 
 if __name__ == "__main__":
     main()
