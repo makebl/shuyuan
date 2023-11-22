@@ -202,10 +202,13 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
         for filename in files:
             with open(os.path.join(dir_path, filename)) as f:
                 data = json.load(f)
-                if 'shuyuan' in filename:
-                    all_data_shuyuan.append(data)  # 将数据添加到第一个列表中
-                elif 'shuyuans' in filename:
-                    all_data_shuyuans.append(data)  # 将数据添加到第二个列表中
+                if isinstance(data, list):  # 确保加载的数据是列表
+                    if 'shuyuan' in filename:
+                        all_data_shuyuan.extend(data)  # 将数据添加到第一个列表中
+                    elif 'shuyuans' in filename:
+                        all_data_shuyuans.extend(data)  # 将数据添加到第二个列表中
+                else:
+                    print(f"Invalid data format in {filename}")
 
     # 将文件合并到根目录
     output_path_shuyuan = os.path.join(root_dir, 'shuyuan.json')
@@ -217,9 +220,6 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
     with open(output_path_shuyuans, 'w') as f:
         f.write(json.dumps(all_data_shuyuans, indent=2, ensure_ascii=False))
     print(f"Merged data saved to {output_path_shuyuans}")
-
-
-
 
 
 
