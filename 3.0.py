@@ -76,16 +76,23 @@ def download_json(url, output_root='.'):
     if final_url:
         print(f"Real URL: {final_url}")
 
+        # 根据链接是否包含 'shuyuan' 或 'shuyuans' 设置子目录名称
         if 'shuyuan' in final_url:
             subdirectory = 'shuyuan'
         elif 'shuyuans' in final_url:
             subdirectory = 'shuyuans'
         else:
+            # 如果既不包含 'shuyuan' 也不包含 'shuyuans'，默认为 '3.0'
             subdirectory = '3.0'
-  print(f"Output directory: {output_dir}")
+
+        # 设置输出目录为根目录
         output_dir = os.path.join(output_root, subdirectory)
         os.makedirs(output_dir, exist_ok=True)
 
+        # 输出创建的输出目录
+        print(f"Output directory: {output_dir}")
+
+        # 下载最终 URL 的 JSON 内容
         response = requests.get(final_url)
 
         if response.status_code == 200:
@@ -102,6 +109,7 @@ def download_json(url, output_root='.'):
                 if link_date is None:
                     link_date = datetime.today().date()
 
+                # 确保文件保存在指定的输出目录中，而不是子目录中
                 output_path = os.path.join(output_dir, f'{id}.json')
 
                 with open(output_path, 'w', encoding='utf-8') as f:
