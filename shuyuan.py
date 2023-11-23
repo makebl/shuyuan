@@ -231,7 +231,7 @@ def merge_json_files(input_dir='', output_file='merged.json', root_dir=''):
 def updateDate(readMePath):
     text_list = []
     tz = pytz.timezone('Asia/Shanghai')  # 东八区
-    dateNow = datetime.datetime.fromtimestamp(int(time.time()), tz).strftime('%Y-%m-%d %H:%M:%S %Z%z')
+    dateNow = datetime.fromtimestamp(int(time.time()), tz).strftime('%Y-%m-%d %H:%M:%S %Z%z')
 
     with open(readMePath, 'r', encoding="UTF-8") as f:
         for lineTmp in f.readlines():
