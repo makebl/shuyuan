@@ -4,11 +4,11 @@ on:
   schedule:
     - cron: "0 10 */3 * *"
   push:
-    branches: [ "shuyuan" ]
+    branches: [ "shu" ]
     paths:
       - 'xsreader/new/sources.json'
   pull_request:
-    branches: [ "shuyuan" ]
+    branches: [ "shu" ]
     paths:
       - 'xsreader/new/sources.json'
   workflow_dispatch:
