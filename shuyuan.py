@@ -7,7 +7,7 @@ import re
 import urllib3
 import urllib.parse
 import shutil
-
+import pytz
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 urls = [
