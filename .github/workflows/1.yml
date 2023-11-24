@@ -35,8 +35,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.1
-        release_name: Release v1.0.1
+        tag_name: v1.0.2
+        release_name: Release v1.0.2
         draft: false
         prerelease: false
 
@@ -47,7 +47,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./  # 修改路径为实际的相对路径
-        asset_name: 1.py  # 修改文件名为实际的文件名
+        asset_path: ./dist/1.exe  # 修改路径为实际的相对路径
+        asset_name: 1.exe  # 修改文件名为实际的文件名
         asset_content_type: application/octet-stream
 
