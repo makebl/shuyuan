@@ -47,7 +47,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/1.exe  # 修改路径为实际的相对路径
+        asset_path: ./1.py  # 修改路径为实际的相对路径
         asset_name: 1.exe  # 修改文件名为实际的文件名
         asset_content_type: application/octet-stream
 
