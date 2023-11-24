@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main  # 你的主分支
+      - shu  # 你的主分支
 
 jobs:
   build:
