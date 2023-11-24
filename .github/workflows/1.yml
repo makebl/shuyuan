@@ -1,6 +1,7 @@
 name: Build and Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main  # 你的主分支
@@ -14,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
 
@@ -24,7 +25,7 @@ jobs:
         pip install -r requirements.txt  # 如果有依赖项的话
 
     - name: Build EXE
-      run: pyinstaller --onefile your_script_name.py
+      run: pyinstaller --onefile 1.py
 
     - name: Create Release
       id: create_release
@@ -44,7 +45,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/your_script_name
-        asset_name: your_script_name
+        asset_path: ./1.py
+        asset_name: 1.py
         asset_content_type: application/octet-stream
 
