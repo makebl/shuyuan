@@ -21,7 +21,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        pip install -r requirements.txt
+        pip install pyinstaller cx_Freeze
+
 
     - name: Build Executable
       run: |
