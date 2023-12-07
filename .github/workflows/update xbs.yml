@@ -1,8 +1,8 @@
 name: 香色闺阁
 
 on: 
-  schedule:
-    - cron: "0 10 */3 * *"
+  #schedule:
+    #- cron: "0 10 */3 * *"
   push:
     branches: [ "shuyuan" ]
     paths:
