@@ -1,14 +1,18 @@
-{
-    "articleStyle": 0,
-    "customOrder": 0,
-    "enableJs": true,
-    "enabled": true,
-    "enabledCookieJar": true,
-    "lastUpdateTime": 0,
-    "loadWithBaseUrl": true,
-    "singleUrl": true,
-    "sourceGroup": "1",
-    "sourceIcon": "",
-    "sourceName": "订阅",
-    "sourceUrl": "https://raw.githubusercontent.com/shidahuilang/shuyuan/shuyuan/good.json"
-}
+[
+    {
+        "customOrder": -9999,
+        "enableJs": true,
+        "enabled": true,
+        "loadWithBaseUrl": true,
+        "ruleArticles": "$.list[*]",
+        "ruleContent": "<js>result</js>",
+        "ruleImage": "$.pic",
+        "ruleLink": "$.url",
+        "rulePubDate": "$.time",
+        "ruleTitle": "$.title",
+        "sourceGroup": "VIP",
+        "sourceIcon": "https://gitee.com/alanskycn/yuedu/raw/master/JS/icon.jpg",
+        "sourceName": "dingyue",
+        "sourceUrl": "https:\/\/raw.githubusercontent.com/shidahuilang/shuyuan/shuyuan/good.json"
+    }
+]
